@@ -1,0 +1,527 @@
+"""
+@uthor : Romain Vincent
+This file defines a JsonData class to handle easily the json files
+"""
+import json
+import matplotlib.lines as mpllines
+from scipy import constants as pc
+from scipy import*
+from numpy import*
+from pylab import *
+
+"""import ipy_profile_sh"""
+
+
+
+
+"""
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Opening of the files
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+"""
+
+
+
+class SciData :
+	"""
+	This class extrac the data form a text file generated using the old scilab procedure. NB : the scilab procedure has to be revised since it inserts a line of zero in the middle of the matrix
+	"""
+	def __init__(self, filename) :
+		temp = loadtxt(filename)
+		self.data = extractScilab(temp)
+
+
+
+
+def extracjson(filename): 
+	"""
+	First programme allows to read json file and generate a python object from it. The argument to be given is the filename of the json file. The function returns the data in a python object format
+	"""
+	monjson = json.load(open(filename,'r'))
+	return monjson
+
+
+
+"""
+*****************************************************************************************
+Functions that handle the formatting of the figure
+*****************************************************************************************
+"""
+
+
+
+
+def cb_format(cb) :
+	"""
+	This function formats the colorbar
+        """
+	cb.ax.set_position([0.28,0.08,0.385,0.06])
+	cb.ax.set_aspect(0.25)
+
+	cb.ax.title.set_fontsize(12)
+	cb.ax.title.set_position([-0.8,-0.50])
+	cb.ax.title.set_text(r"$log(dI$/$dV)$ $(\rm{S})$")
+
+	return cb
+
+def f_format(f):
+	"""
+	This function formats the figure
+	"""
+	f.subplots_adjust(left = 0.16, bottom = 0.22, right = 0.98, top = 0.96, wspace = 0.2, hspace = 0.2)
+	f.set_size_inches([3.425,3],forward = "true")
+	return f
+
+def ax_format(ax,string):
+	"""
+	This function formats the axis
+	"""
+	ax.set_aspect("auto")
+	ax.set_xticklabels(floor(ax.get_xticks()),fontsize = 11)
+	ax.set_yticklabels(ax.get_yticks(),fontsize = 11)
+	ax.set_ylabel(r"$V_{\rm{sd}}$ $(\rm{mV})$",fontsize = 12, fontweight = "regular", position = (1,0.5), horizontalalignment = "center")
+	if(string == "Vg"):
+		ax.set_xlabel(r"$V_{\rm{g}}$ $(\rm{V})$",fontsize = 12, verticalalignment = "top", horizontalalignment = "right", position = (0.9,1) )
+	if(string == "B") :
+		ax.set_xlabel(r"$B$ $(\rm{T})$",fontsize = 12, verticalalignment = "top", horizontalalignment = "right", position = (0.9,1) )
+
+	
+	"""
+	This part handle the position of the ticks
+	"""
+	xlines = ax.get_xticklines()
+	ylines = ax.get_yticklines()
+
+	for line in xlines :
+		line.set_marker(mpllines.TICKDOWN)
+
+	for line in ylines :
+		line.set_marker(mpllines.TICKLEFT)
+
+	xlabels = ax.get_xticklabels()
+	ylabels = ax.get_yticklabels()
+	
+	for label in xlabels :
+		label.set_y(-0.01)
+	for label in ylabels :
+		label.set_x(-0.01) 
+
+	ax.xaxis.set_ticks_position("bottom")
+        ax.yaxis.set_ticks_position("left")
+
+
+	return ax
+
+
+def plot_format(f,ax,cb,string) :
+	cb_format(cb)
+	f_format(f)
+	ax_format(ax,string)
+	return True
+		
+
+"""
+*********************************************************************************
+*		Data processing:
+*This part contains all the functions dedicated to the data processing
+"""
+
+
+
+def get_coupling():
+	"""	
+	This function gives the coupling of the sample to the gate source and drain as weel as the alpha factor given by Cg/Ct . 
+	One has to give four point, starting with the slope defined by Cg/Cs and then the one defined by Cg / (Cd +Cg). It retunrs the result 
+	as Cs Cd and alpha.
+	"""
+	temp = ginput(4)
+	Cs = abs( (temp[0][0] - temp[1][0]) / (temp[0][1] - temp[1][1])) * 1e3
+	tp = abs( ( temp[2][1] - temp[3][1] )/(temp[2][0] - temp[3][0])) * 1e-3
+	Cd = (1 - tp)/ tp
+	alp = 1 / (Cs + 1 +Cd)
+	return [Cs,Cd,alp] 
+
+
+
+def get_slope():
+	"""
+	Given two points, give the slope a line
+	"""
+	temp = ginput(2)
+	return (temp[0][1] - temp[1][1])/(temp[0][0] - temp[1][0])
+
+
+
+
+def colarray(data, colnum, rem):
+	"""
+	This function give back the column of an array given the array and the column number to be extracted. 
+	The third parameter allow to get ride of the first terms of the column.
+	"""
+	temp = []
+	for i in range( len(data) - rem):
+		temp.append(data[i+rem][colnum-1])
+	return temp
+
+
+def plotdata(data, x, y):
+	"""
+	This function plot a 2D curve given a json data and the column number of x and y axis.
+	"""
+	plot(colarray(data, x, 0), colarray(data, y, 0))
+	return True
+
+
+def getinputs(data):
+	"""
+	This function give the inputs used for a measurement given the corresponding json file.
+	"""
+	inputs = data["inputs"]
+	result = []
+	for x in inputs:
+		result.append(str(data["inputs"][x]["name"]).replace("u", ""))
+	return result
+
+def getoutputs(data):
+	"""
+	This function give the outputs used for a measurement given the corresponding json file.
+	"""
+	
+	inputs = data["outputs"]
+	result = []
+	for x in inputs:
+		result.append(str(data["outputs"][x]["name"]).replace("u", ""))
+	return result
+
+def getcolumns(data, col_num, sweep_num):
+	"""
+	This function allows to access to one column of a json file sweep given the sweep and the column numbers.
+	"""
+	result = []
+	for i in range(sweep_num):
+		result.append(colarray(data["measures"][i]["data"],col_num , 0))
+	return result
+
+def getposcolumn(data,string):
+	"""
+	This function allows to obtain the column number in a json file sweep given the name of the input
+	"""
+	result = 0
+	for i in range(size(data["measures"][0]["columns"])) :
+		if(data["measures"][0]["columns"][i] == string) :
+			result = i+1
+	return result
+
+
+def export_data(filename, data):
+	savetxt(filename,matrix(data).transpose(),delimiter = " , ")
+	return True
+
+
+
+def extractScilab(data):
+	"""
+	This function allows to extract the data from a CSV like file. This is the function that should be used for the old transfrom data.
+	"""
+	
+	raw = size(data) / size(data[1])
+	result = []
+	for i in range(raw-1) :
+		result.append(data[ (i+1) , 1: ])
+	return result
+
+
+def plot_profile_h(im):
+	"""
+	Given a point on the Coulomb Map, this function plot the corresponding profile and returns a array of two columns [V,dI/dV]
+	"""
+	y = ginput()[0][1]
+	xm,  Xm = im.get_extent()[0:2]
+	ym,  Ym = im.get_extent()[2:4]
+	sweep_n = size(im.get_array()) / size(im.get_array()[0])
+	nbr =  (1. * sweep_n / abs(Ym - ym)) * (y-ym) 
+	figure()
+	data = im.get_array()
+	plot(linspace(xm, Xm, size(im.get_array()[0])) ,  data[nbr])
+	return [linspace(xm, Xm, size(im.get_array()[0]))  , data[nbr] ]
+
+
+
+
+def plot_profile(im):
+	"""
+	Given a point on the Coulomb Map, this function plot the corresponding profile and returns a array of two columns [V,dI/dV]
+	"""
+	x = ginput()[0][0]
+	xm,  Xm = im.get_extent()[0:2]
+	ym,  Ym = im.get_extent()[2:4]
+	sweep_n = size(im.get_array()[0])
+	nbr =  (1. * sweep_n / abs(Xm - xm)) * (x-xm) 
+	figure()
+	data = im.get_array()
+	plot( linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0))
+	return [linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0)]
+
+def plot_int(data):
+	"""
+	Given a array of data in the form [V, dI/dV], it comutes and plot the integral. This fonction can be used together with plot_profile
+	to evaluate the gamma parameters of the sample.
+	"""
+	result = []
+	for i in range(len(data[0])+1):
+		if i > 0 :
+			result.append(integrate.simps(data[0][0:i], data[1][0:i]))
+	f=figure()
+	result.reverse()
+	vd =  array(data[1])
+	vd = vd.tolist()
+	vd.reverse()
+	plot(vd, result)
+	x= ginput()
+	for i in range(len(result)) :
+		result[i] = result[i] -x[0][1] 
+	f.clear()
+	plot(vd, result)
+	return result
+	
+
+"""
+****************************************************************************
+* Class definition
+* This part is dedicated tio the creation of measure like object.
+"""
+
+
+
+
+class JsonDataOld :
+	"""
+	This class is used to handle data stored in a json file. It takes a jsonfile as argument ang generate an object that makes data easier to manipulate
+	"""
+	def __init__(self,filename) :
+		self._data = extracjson(filename)
+		self._inputs = getinputs(self._data)
+		self._outputs = getoutputs(self._data)
+		self._sweep_number = size(self._data["measures"])
+		self._inphase = getcolumns(self._data, getposcolumn(self._data,"real"), self._sweep_number)
+
+	def map_phase(self):
+		imshow(matrix(self._inphase).transpose().tolist(), origin="lower",extent = [-3,3,-1,1],aspect = 5)
+
+
+class JsonData :
+	"""
+	This is the new class Json file that should generate in an esasier way, the correct plot with the correct axis.
+	"""
+	def __init__(self,filename):
+		self._data = extracjson(filename)
+		self._inputs = getinputs(self._data)
+		self._outputs = getoutputs(self._data)
+		self._sweep_number = size(self._data["measures"])
+		self._inphase = getcolumns(self._data, getposcolumn(self._data,"real"),self._sweep_number)
+		self._pylab = self._data["pylab"]
+
+	def plot_prof(self):
+		temp = plot_profile(self.im)
+		return temp
+		
+	def plot_prof_h(self):
+		temp = plot_profile_h(self.im)
+		return temp
+	
+	def get_coup(self):
+		temp =  get_coupling()
+		self.cs = temp[0]
+		self.cd = temp[1]
+		self.alpha= temp[2]
+		return temp
+	
+	def map_phase(self):
+		self.fig = figure()
+		self.ax  = self.fig.add_subplot(111)
+		self.im = self.ax.imshow(matrix(self._inphase).transpose().tolist(), origin="lower" , extent = [self._pylab["x_min"], self._pylab["x_max"], self._pylab["y_min"]*1e3, self._pylab["y_max"]*1e3]  )
+		self.col = self.fig.colorbar(self.im)
+		self.ax.set_aspect("auto")
+
+
+
+
+
+
+
+
+"""
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+This first part is dedicated to the simulation of magnetic systems. 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+"""
+
+
+"""
+    Created on Fri Nov 13 10:50:30 2009
+
+@author: Romain VINCENT
+Couplage de spins
+"""
+
+g=1
+muB=1
+B=1
+"""
+////////////////////////////////////////////////
+Definition of the Pauli matrices
+///////////////////////////////////////////////
+"""
+def MPauli(J) :
+    """Compute the Pauli matrices for a given system. It returns them in the following order : Sx,Sy,Sz,S+,S-"""
+    
+    """This part creates the different matrices filled with zeros"""
+    sigmaX = matrix( zeros((2*J+1,2*J+1)) )
+    sigmaY = matrix( zeros((2*J+1,2*J+1)) )
+    sigmaZ = matrix( zeros((2*J+1,2*J+1)) )
+    sigmaPlus = matrix( zeros((2*J+1,2*J+1)) )
+    sigmaMoins = matrix( zeros((2*J+1,2*J+1)) )
+    n = int(2*J+1)
+        
+    """Sigma Z """
+    for i in range(n) :
+        for j in range(n) :
+            if i == j :
+                sigmaZ[i,j] = J - i          
+
+        """SigmaPlus"""
+    for i in range(n) :
+        for j in range(n) :
+            if j == i + 1 :
+                sigmaPlus[i,j] = sqrt(J * (J+1) - (sigmaZ[j,j] * (sigmaZ[j,j] + 1)))          
+
+    """SigmaMoins"""
+    for i in range(n) :
+        for j in range(n) :
+            if j == i - 1 :
+                sigmaMoins[i,j] = sqrt(J * (J + 1) - (sigmaZ[j,j] * (sigmaZ[j,j] - 1)))          
+                
+    
+    """SigmaX"""
+    sigmaX = (sigmaPlus+sigmaMoins) / 2.
+    
+    """SigmaY"""
+    sigmaY=1j * (sigmaMoins-sigmaPlus) / 2.
+    
+    
+    return [sigmaX,  sigmaY, sigmaZ , sigmaPlus, sigmaMoins]
+
+
+
+"""
+////////////////////////////////////////////////
+Definition of the Pauli matrices for several particles
+///////////////////////////////////////////////
+"""
+
+def sysPau(J) :
+    """This function compute the different Sx,Sy,Sz,S+,S- for all the particles of the system and return them in a single array in the same order than given in argument."""
+    n = len(J)
+    sysPau = []
+    for i in range(n) :
+        sysPau.append(MPauli(J[i]))
+    
+    return sysPau   
+    """It returns and array of matrices"""
+    
+
+"""
+////////////////////////////////////////////////
+Definition of the Pauli matrices of several product into the final space using the kronecker product
+///////////////////////////////////////////////
+"""
+
+def tensorProduct(J):
+    """For a given matrix J=[J1,J2,...,Jn] this function return the same operateur but in the new space obtained using the kroenecker product"""
+    n = len(J)
+    result = []
+    for i in range(n) :
+        Temp1 = 1
+        Temp2 = 1
+        for j in range(i) :
+            Temp1 = kron(Temp1, eye(len(J[j])))
+        for j in range((i+1), n):
+            Temp2 = kron(Temp2, eye(len(J[j])))
+        result.append(kron(Temp1, kron(J[i], Temp2)))
+    return result
+
+
+"""
+////////////////////////////////////////////////
+Extraction of the different data (such as Sx or Sy) for a given system
+///////////////////////////////////////////////
+"""
+def extractData(J, N):
+    """This function is helpful extracting data from the matrix returned sysPau and using tensorProduct, construct the quantum operators in the new space"""
+    n = len(J)
+    temp = []
+    for i in range(n):
+        temp.append(J[i][N])
+    result = tensorProduct(temp)
+    return result
+    
+
+def sumOver(S):
+    n = len(S)
+    result = []
+    for i in range(n):
+        result = result + S[i]
+    return result
+
+
+def TwoSpinCoupling(J1, J2, Jint):
+    n = len(J1)
+    m = len(J1[0])
+    result = matrix( zeros((m ,  m)) )
+    
+    for i in range(n):
+        for j in range(n):
+            result = result + Jint[i , j] * J1[i] * J2[j]
+    return result
+    
+def SpinsCoupling(S, Jint):
+    """This function compute and return on a matrix form the coupling between several spin given the coupling matrices Jint """
+    n = len(S)
+    m = len(S[0][0])
+    result = matrix( zeros((m ,  m)) )
+    for i in range(n - 1):
+        for j in range (i+ 1, n):
+            result = result + TwoSpinCoupling(S[i], S [j], Jint[i + j - 1]) 
+    return result
+
+
+
+class VectSys : 
+    """"This object represents the different particle properties in the same space. Several methods allow to access to the different parameters of the system and also to implement some basic function essential in defining a basic hamiltonien."""
+    def __init__(self, J):
+        self.J = sysPau(J)
+        self.Sx = extractData(self.J, 0)
+        self.Sy = extractData(self.J, 1)
+        self.Sz = extractData(self.J, 2)
+        self.Splus = extractData(self.J, 3)
+        self.Smoins = extractData(self.J, 4)
+    
+
+class MagSys :
+    """This object represent the whole magnetic system with the partciles and the hamiltonien. It can gives access to the energie levels, the eigenvectors and some transistion probability """
+    def __init__(self,J, Coupl, B):
+        MagnSys = VectSys(J)
+    
+    
+    
+
+Jint=matrix([[1, 0, 0,],[0,1,0],[0,0,1]])
+Jintot=[Jint]
+J=[0.5,1.5]
+DE=VectSys(J)
+S1=[DE.Sx[0], DE.Sy[0],DE.Sz[0]]
+S2=[DE.Sx[1], DE.Sy[1],DE.Sz[1]]
+S=[S1, S2]
+E,V=linalg.eig(SpinsCoupling(S, Jintot))
+
+

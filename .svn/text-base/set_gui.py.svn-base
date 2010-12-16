@@ -1,0 +1,117 @@
+#!/usr/bin/env python
+
+#import spin_int as spit
+import matplotlib
+matplotlib.use( 'WXAgg' )
+import wx
+import os
+import numpy as num
+
+from matplotlib.backends.backend_wxagg import NavigationToolbar2Wx, FigureCanvasWxAgg
+from matplotlib.figure import Figure
+
+class MapWindow(wx.Frame):
+		def __init__(self,parent,id):
+			wx.Frame.__init__(self,parent,id)
+			self.figure = Figure((5,4),75)
+			self.canvas = FigureCanvasWxAgg(self,-1,self.figure)
+			self.subplot = self.figure.add_subplot(111)
+			self.subplot.imshow([[1,2,3],[5,2,6]])
+			self.canvas.draw()
+			self.sizer = wx.BoxSizer(wx.VERTICAL)
+		        self.sizer.Add(self.canvas, 1, wx.LEFT | wx.TOP | wx.GROW)
+		        self.SetSizer(self.sizer)
+		        self.Fit()
+		        self.add_toolbar()
+
+		def add_toolbar(self):
+			self.toolbar = NavigationToolbar2Wx(self.canvas)
+			self.toolbar.Realize()
+			"""if wx.Platform == '__WXMAC__':
+			    # Mac platform (OSX 10.3, MacPython) does not seem to cope with
+			    # having a toolbar in a sizer. This work-around gets the buttons
+			    # back, but at the expense of having the toolbar at the top
+			    self.SetToolBar(self.toolbar)
+			else:"""
+			# On Windows platform, default window size is incorrect, so set
+			# toolbar width to figure width.
+			#tw, th = self.toolbar.GetSizeTuple()
+			#fw, fh = self.canvas.GetSizeTuple()
+			# By adding toolbar in sizer, we are able to put it at the bottom
+			# of the frame - so appearance is closer to GTK version.
+			# As noted above, doesn't work for Mac.
+			#self.toolbar.SetSize(wx.Size(fw, th))
+			self.sizer.Add(self.toolbar, 0, wx.LEFT | wx.EXPAND)
+			# update the axes menu on the toolbar
+			self.toolbar.update()
+
+
+
+class MainWindow(wx.Frame):
+	def __init__(self,parent,title):
+		wx.Frame.__init__(self,parent,title=title,size=(400,400),style = wx.ALWAYS_SHOW_SB)
+		self.CreateStatusBar()
+		
+
+		#Table of frame assocuated to each plot
+		self.pltin =  {}
+		self.pltbut = {}
+		#counting the number of plot associated to this frame. Count starts to zero.
+		self.plt_num = 0
+		#Setting up the menu
+		filemenu = wx.Menu()
+	
+		#wx.ID_ABOUT and wx.ID_EXIT are standard  IDs provided by wx
+		menuAbout = filemenu.Append(wx.ID_ABOUT, "&About","What do you wanna know !?")
+		menuExit = filemenu.Append(wx.ID_EXIT, "E&xit","Bye bye")
+		menuPlot = filemenu.Append(wx.ID_ANY,"Plot","Plot a line")
+		menuOpen = filemenu.Append(wx.ID_OPEN, "O&pen","Open file")
+
+		#Creating menubar
+		menuBar = wx.MenuBar()
+		menuBar.Append(filemenu,"&File") 
+		self.SetMenuBar(menuBar)
+
+		#Set events
+		self.Bind(wx.EVT_MENU,self.OnAbout, menuAbout)
+		self.Bind(wx.EVT_MENU,self.OnExit, menuExit)
+		self.Bind(wx.EVT_MENU,self.OnOpen, menuOpen)
+		self.Bind(wx.EVT_MENU,self.OnPlot, menuPlot)
+
+		self.Show(True)
+
+	def OnAbout(self,e):
+		# A message dialog box with an OK button. wx.OK is a standard ID in wxWidgets.
+		dlg = wx.MessageDialog( self, "Cool", "About", wx.OK)
+		dlg.ShowModal() # Show it
+		dlg.Destroy() # finally destroy it when finished.
+
+	def OnExit(self,e):
+		self.Close(True)  # Close the frame
+
+	def OnOpen(self,e):
+	        """ Open a file"""
+        	self.dirname = ''
+        	dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "Trace (*.trace)|*.trace|Map (*.map)|*.map|Others|*.*", wx.OPEN)
+        	if dlg.ShowModal() == wx.ID_OK:
+        	    self.filename = dlg.GetFilename()
+        	    self.dirname = dlg.GetDirectory()
+        	    f = open(os.path.join(self.dirname, self.filename), 'r')
+        	    f.close()
+        	dlg.Destroy()
+	
+
+	def OnPlot(self,e):
+		self.plt_num = self.plt_num + 1
+		print "coucou"
+		self.pltin[self.plt_num] = MapWindow(self,wx.ID_ANY)
+		self.pltin[self.plt_num].Show()
+		self.pltbut[self.plt_num] = wx.Button(self,-1,"coucou",(100,100))
+
+
+
+
+app = wx.App(False)
+frame = MainWindow(None, "Plot Browser")
+frame.Show()
+app.MainLoop()
