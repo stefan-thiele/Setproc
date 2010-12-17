@@ -14,8 +14,8 @@ from numpy import*
 from pylab import *
 from matplotlib.colors import LinearSegmentedColormap
 # import ipy_profile_sh
-execfile("/home/dilu-d103/NanoQtScripts/RomainV/Python/functions_ver2.py")
+execfile("/home/romain/setproc/functions_ver2.py")
 #execfile("/home/dilu-d103/NanoQtScripts/RomainV/Python/map.py")
-execfile("/home/dilu-d103/NanoQtScripts/RomainV/Python/polar_ver2.py")
-execfile("/home/dilu-d103/NanoQtScripts/RomainV/Python/g_b_ver.py")
-execfile("/home/dilu-d103/NanoQtScripts/RomainV/Python/dataprocess.py")
+#execfile("/home/romain/setproc/polar_ver2.py")
+execfile("/home/romain/setproc/g_b.py")
+execfile("/home/romain/setproc/dataprocess.py")
