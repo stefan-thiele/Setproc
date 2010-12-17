@@ -64,8 +64,9 @@ Functions that handle the formatting of the figure
 *****************************************************************************************
 """
 
-
-
+def get_json(filename) :
+	result =  json.load(open(filename,'r'))
+	return  result
 
 def cb_format(cb) :
 	"""
