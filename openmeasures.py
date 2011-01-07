@@ -113,7 +113,7 @@ class OpenJson(dict):
 			K = monjson.keys()
 			K.pop(K.index("vim_modeline")) #eliminate vim mode parameter
 			self["sweep_number"] = size(monjson["measures"])
-			self["bias"] = data_json(monjson,0,1)
+			self["bias"] = json_data(monjson,0,1)
 			self["data"] = []
 			for i in range(self["sweep_number"]):
 				self["data"].append(json_data(monjson,i,2)) #this function return the columns 2 of the sweep i
@@ -125,7 +125,6 @@ class OpenJson(dict):
 		except KeyError :
 			print "Problem while generating the metadata"
 			state = False
-
 
 		return state
 
@@ -171,6 +170,7 @@ class OpenJson(dict):
 				self["data"][nbr][typesweep]["bias"].append(json_data(monjson,i,1))
 				self["data"][nbr][typesweep]["data"].append(json_data(monjson,i,2))
 				self["data"][nbr][typesweep]["info"]["try_nbr"] += 1
+		
 			self["total_sweep"] = nbr 
 
 		except KeyError : 
@@ -178,11 +178,6 @@ class OpenJson(dict):
 			state = False
 		
 		return state
-
-
-
-
-			
 
 
 class OpenBin(dict): 
@@ -214,6 +209,3 @@ class OpenBin(dict):
 			self[x] = temp[i]
 			i+=1
 		return state
-	
-
-

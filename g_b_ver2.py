@@ -14,38 +14,31 @@ class GB_gui(eta.HasTraits) :
 	def __init__(self, A,width=9) :
 		self.width = width
 		self.a=A
-		#self._name_default()
 
 	def _lunch_fired(self) :
 		self.a.plot_curve(self.nbr_sweep, self.width)
 
 	def _nbr_sweep_changed(self) :
 		self.a.plot_curve(self.nbr_sweep, self.width)
-"""
+	"""
 	def _width_changed(self) :
 		self.a.plot_curve(self.nbr_sweep, self.width)
-"""
+	"""
 
-class GB_Open(OpenMeasures) :
+
+class GB_Open(Measure) :
 	"""
 	This is the new class Json file that should generate in an esasier way, the correct plot with the correct axis.
 	"""
 	def __init__(self,filename,mode):
-		OpenMeasures.__init__(self,filename,mode)
-		"""
-		self.pylab = None
-		self.bias = None
-		self.sweep_number = None
-		self.data
-		"""
-
+		Measure.__init__(self,filename,mode)
+		
 	def plot_curve(self,nbr,w=9) :
 		try :
 			self.fig.clear()
 			self.ax.clear()
 		except :
 			self.fig = figure()
-		#self.fig.clf()
 		X = self["bias"]
 		Y = self["data"][nbr]
 		si = size(self["bias"])
@@ -81,18 +74,13 @@ class GB_Open(OpenMeasures) :
 
 
 
-class Pic_Open(OpenMeasures) :
+class Pic_Open(Measure) :
 	"""
 	This is the new class Json file that should generate in an esasier way, the correct plot with the correct axis.
 	"""
 	def __init__(self,filename,mode):
-		OpenMeasures.__init__(self,filename,mode)
-		"""
-		self.pylab = None
-		self.bias = None
-		self.sweep_number = None
-		self.data
-		"""
+		Measure.__init__(self,filename,mode)
+	
 	def _inter_stat(self,trace) :
 		temp = []
 		data = []
@@ -159,7 +147,7 @@ class Pic_Open(OpenMeasures) :
 
 
 
-class probar_pic(OpenMeasures) :
+class probar_pic(Measure) :
 	
 	def __init__(self,filename,mode):
 		OpenMeasures.__init__(self,filename,mode)
@@ -216,12 +204,12 @@ class probar_pic(OpenMeasures) :
 
 
 
-class new_GB(OpenMeasures) :
+class new_GB(Measure) :
 		
 	def __init__(self,files="here",mode="Bin"):
 		
 		if( size(files) == 1 ) :
-			OpenMeasures.__init__(self,files[0],"Bin")
+			Measure.__init__(self,files[0],"Bin")
 	
 		if( size(files) > 1) :
 			folder = os.getcwd()+"/"
@@ -250,15 +238,15 @@ class new_GB(OpenMeasures) :
 		self._picA.get_hist(nbr,rge,stat_name)
 		self._picR.get_hist(nbr,rge,stat_name)
 
-	def get_cycle(self,colr) :
+	def get_cycle(self,colr,offset) :
 		HA = self._picA["hist"]
 		HR = self._picR["hist"]
 		SA= sum_over(HA[0])
 		SR= sum_over(HR[0])
 		normA = max(SA)
 		normR = max(SR)
-		self.pA = plot(HA[1][0:size(SA)],2 * (array(SA)/(1.* normA) - 0.5), linewidth = 3, color = colr )
-		self.pR = plot(HR[1][0:size(SA)],2 * (array(SR)/(1.* normR) - 0.5), linewidth = 3, color = colr )
+		self.pA = plot(array(HA[1][0:size(SA)])-offset,2 * (array(SA)/(1.* normA) - 0.5), linewidth = 3, color = colr )
+		self.pR = plot(array(HR[1][0:size(SA)]) + offset,2 * (array(SR)/(1.* normR) - 0.5), linewidth = 3, color = colr )
 
 	def newstat_A(self,statname) :
 		self._picA.new_stat(statname,self._A)
