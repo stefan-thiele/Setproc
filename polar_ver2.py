@@ -1,10 +1,10 @@
 
-class TracePolar(OpenMeasures) :
+class TracePolar(Measure) :
 	"""
 	This class is used to handle data stored in a json file. It takes a jsonfile as argument ang generate an object that makes data easier to manipulate
 	"""
 	def __init__(self,filename,mode):
-		OpenMeasures.__init__(self,filename,mode)
+		Measure.__init__(self,filename,mode)
 
 		"""
 		self.pylab = None
@@ -73,7 +73,6 @@ class FullPolar(dict) :
 			for i in range(self.trace["sweep_number"]) :
 				YT = array(self.trace["data"][i])
 				YR = self.retrace["data"][i]
-				YR.reverse()
 				self["data"].append(YT -array(YR))
 				for j in range(sit) :
 					self["data"][i][j] = self["data"][i][j]*sign(self.trace["bias"][j])

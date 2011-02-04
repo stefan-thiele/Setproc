@@ -7,7 +7,7 @@ class JsonDataOld :
 	This class is used to handle data stored in a json file. It takes a jsonfile as argument ang generate an object that makes data easier to manipulate
 	"""
 	def __init__(self,filename) :
-		data = extracjson(filename)
+		data = get_json(filename)
 		self._inputs = getinputs(data)
 		self._outputs = getoutputs(data)
 		self._sweep_number = size(data["measures"])
@@ -22,12 +22,12 @@ class JsonData :
 	This is the new class Json file that should generate in an esasier way, the correct plot with the correct axis.
 	"""
 	def __init__(self,filename):
-		data = extracjson(filename)
+		data = get_json(filename)
 		self._inputs = getinputs(data)
 		self._outputs = getoutputs(data)
 		self._sweep_number = size(data["measures"])
 		self._inphase = getcolumns(data, getposcolumn(data,"real"),self._sweep_number)
-		self._pylab = data["pylab"]
+		#self._pylab = data["pylab"]
 
 	def plot_prof(self):
 		temp = plot_profile(self.im)
@@ -47,9 +47,9 @@ class JsonData :
 	def map_phase(self):
 		self.fig = figure()
 		self.ax  = self.fig.add_subplot(111)
-		self.im = self.ax.imshow(matrix(self._inphase).transpose().tolist(), origin="lower" , extent = [self._pylab["x_min"], self._pylab["x_max"], self._pylab["y_min"]*1e3, self._pylab["y_max"]*1e3]  )
-		self.col = self.fig.colorbar(self.im)
-		self.ax = ax_format(self.ax,self._pylab["kind"])
+		self.im = self.ax.imshow( matrix(array(self._inphase)).transpose().tolist(), origin="lower")# , extent = [self._pylab["x_min"], self._pylab["x_max"], self._pylab["y_min"]*1e3, self._pylab["y_max"]*1e3], cmap = french)
+		self.col = self.fig.colorbar(self.im, orientation='horizontal')
+		#self.ax = ax_format(self.ax,self._pylab["kind"])
 		self.ax.set_aspect("auto")
 		self.col.ax.title.set_text(r"$dI$/$dV$ $(\rm{S})$")
 		

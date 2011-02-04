@@ -10,27 +10,60 @@ This file contains all the functions needed for the different classes
 Flag colormap
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 """
-cdict1 = {'red':  ((0.0, 0.0, 0.0),
-                   (0.25,0.7, 0.7),
+cdict3 = {'red':  ((0.0, 0.0, 0.0),
+                   (0.25,0.5, 0.5),
                    (0.5, 1.0, 1.0),
                    (0.75,1.0, 1.0),
                    (1.0, 1.0, 1.0)),
 
          'green': ((0.0, 0.0, 0.0),
-                   (0.25,0.7, 0.7),
+                   (0.25,0.5, 0.5),
                    (0.5, 1.0, 1.0),
-                   (0.75,0.7, 0.7),
+                   (0.75,0.5, 0.5),
                    (1.0, 0.0, 0.0)),
 
          'blue':  ((0.0, 1.0, 1.0),
                    (0.25,1.0, 1.0),
                    (0.5, 1.0, 1.0),
-                   (0.75,0.7, 0.7),
+                   (0.75,0.5, 0.5),
                    (1.0, 0.0, 0.0))
         }
 
 
-french = LinearSegmentedColormap('french', cdict1)
+
+cdict2 = {'red':  ((0.0, 0.0, 0.0),
+		   (0.125,0.25,0.25),
+                   (0.25,0.5, 0.5),
+		   (0.375,0.75,0.75),
+                   (0.5, 1.0, 1.0),
+		   (0.625,1.0,1.0),	
+                   (0.75,1.0, 1.0),
+		   (0.875,1.0,1.0),
+                   (1.0, 1.0, 1.0)),
+
+         'green': ((0.0, 0.0, 0.0),
+		   (0.125,0.25,0.25),
+                   (0.25,0.5, 0.5),
+		   (0.375,0.75,0.75),
+                   (0.5, 1.0, 1.0),
+		   (0.625,0.75,0.75),
+                   (0.75,0.5, 0.5),
+		   (0.875,0.25,0.25),
+                   (1.0, 0.0, 0.0)),
+
+         'blue':  ((0.0, 1.0, 1.0),
+		   (0.125,1.0,1.0),
+                   (0.25,1.0, 1.0),
+		   (0.375,1.0,1.0),
+                   (0.5, 0.1, 0.1),
+		   (0.625,0.75,0.75),
+                   (0.75,0.5, 0.5),
+		   (0.875,0.25,0.25),
+                   (1.0, 0.0, 0.0))
+        }
+
+
+french = LinearSegmentedColormap('french', cdict3)
 
 
 
@@ -72,11 +105,11 @@ def cb_format(cb) :
 	"""
 	This function formats the colorbar
         """
-	cb.ax.set_position([0.28,0.08,0.385,0.06])
+	cb.ax.set_position([0.,0.08,0.385,0.06])
 	cb.ax.set_aspect(0.25)
 
-	cb.ax.title.set_fontsize(12)
-	cb.ax.title.set_position([-0.8,-0.50])
+	cb.ax.title.set_fontsize(16)
+	cb.ax.title.set_position([1.7,-0.3])
 	cb.ax.title.set_text(r"$log(dI$/$dV)$ $(\rm{S})$")
 
 	return cb
@@ -86,7 +119,7 @@ def f_format(f):
 	This function formats the figure
 	"""
 	f.subplots_adjust(left = 0.16, bottom = 0.22, right = 0.98, top = 0.96, wspace = 0.2, hspace = 0.2)
-	f.set_size_inches([3.425,3],forward = "true")
+	f.set_size_inches([4.5,4.5],forward = "true")
 	return f
 
 def ax_format(ax,string):
@@ -314,7 +347,7 @@ def plot_profile_h(im):
 	figure()
 	data = im.get_array()
 	plot(linspace(xm, Xm, size(im.get_array()[0])) ,  data[nbr])
-	return [linspace(xm, Xm, size(im.get_array()[0]))  , data[nbr] ]
+	return [linspace(xm, Xm, size(im.get_array()[0]))  , data[nbr]]
 
 
 
@@ -327,11 +360,12 @@ def plot_profile(im):
 	xm,  Xm = im.get_extent()[0:2]
 	ym,  Ym = im.get_extent()[2:4]
 	sweep_n = size(im.get_array()[0])
-	nbr =  (1. * sweep_n / abs(Xm - xm)) * (x-xm) 
+	nbr =  (1. * sweep_n / abs(Xm - xm)) * (x-xm)
+	Vg = xm + nbr * (Xm-xm)/sweep_n 		
 	figure()
 	data = im.get_array()
 	plot( linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0))
-	return [linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0)]
+	return [linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0),Vg]
 
 def plot_int(data):
 	"""

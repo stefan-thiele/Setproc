@@ -71,6 +71,11 @@ class GB_Open(Measure) :
 			if(temp[1]):
 				self["stat"].append(temp[0]) 
 		return True
+	
+	def get_hist(self,nbr_pts,rge,stat_name) :
+		temp = hist(self[stat_name], nbr_pts,rge)
+		self["hist"] = [temp[0],temp[1]]
+		return True
 
 
 
@@ -210,8 +215,12 @@ class new_GB(Measure) :
 		
 		if( size(files) == 1 ) :
 			Measure.__init__(self,files[0],"Bin")
+			try :
+				print self["with_pic"]
+			except KeyError :
+				self["with_pic"] = True	
 	
-		if( size(files) > 1) :
+		if( size(files) > 3 ) :
 			folder = os.getcwd()+"/"
 			self["filenames"] = dict([])
 			self["filenames"]["A"] = folder+files[0]
@@ -220,14 +229,24 @@ class new_GB(Measure) :
 			self["filenames"]["PicR"] = folder+files[3]
 			self["filenames"]["mode"] = mode
 			self["comments"] = ""
+			self["with_pic"] = True
 			
+		if( size(files) > 1 and size(files) < 3 ) :
+			folder = os.getcwd()+"/"
+			self["filenames"] = dict([])
+			self["filenames"]["A"] = folder+files[0]
+			self["filenames"]["R"] = folder+files[1]
+			self["filenames"]["mode"] = mode
+			self["comments"] = "Data registred without the original Pic files"
+			self["with_pic"] = False
 		
 
 	def load_files(self) :
 		self._A = GB_Open(self["filenames"]["A"],self["filenames"]["mode"])
 		self._R = GB_Open(self["filenames"]["R"],self["filenames"]["mode"])
-		self._picA = Pic_Open(self["filenames"]["PicA"],self["filenames"]["mode"])
-		self._picR =  Pic_Open(self["filenames"]["PicR"],self["filenames"]["mode"])
+		if (self["with_pic"]) :
+			self._picA = Pic_Open(self["filenames"]["PicA"],self["filenames"]["mode"])
+			self._picR =  Pic_Open(self["filenames"]["PicR"],self["filenames"]["mode"])
 
 
 	def get_stat(self,seuil,i_start) :
@@ -241,6 +260,16 @@ class new_GB(Measure) :
 	def get_cycle(self,colr,offset) :
 		HA = self._picA["hist"]
 		HR = self._picR["hist"]
+		SA= sum_over(HA[0])
+		SR= sum_over(HR[0])
+		normA = max(SA)
+		normR = max(SR)
+		self.pA = plot(array(HA[1][0:size(SA)])-offset,2 * (array(SA)/(1.* normA) - 0.5), linewidth = 3, color = colr )
+		self.pR = plot(array(HR[1][0:size(SA)]) + offset,2 * (array(SR)/(1.* normR) - 0.5), linewidth = 3, color = colr )
+
+	def get_cycle_trace(self,colr,offset) :
+		HA = self._A["hist"]
+		HR = self._R["hist"]
 		SA= sum_over(HA[0])
 		SR= sum_over(HR[0])
 		normA = max(SA)
@@ -278,15 +307,17 @@ class new_GB(Measure) :
 		else :
 			self._A.save(A)
 			self._R.save(R)
-			self._picA.save(picA)
-			self._picR.save(picR)
+			if (self["with_pic"]) :
+				self._picA.save(picA)
+				self._picR.save(picR)
 
 		if(A != None) :
 			folder = os.getcwd()+"/"
 			self["filenames"]["A"] = folder+A
 			self["filenames"]["R"] = folder+R
-			self["filenames"]["PicA"] = folder+picA
-			self["filenames"]["PicR"] = folder+picR
+			if (self["with_pic"]) :
+				self["filenames"]["PicA"] = folder+picA
+				self["filenames"]["PicR"] = folder+picR
 			self["filenames"]["mode"] = "Bin"
 		filename = self["filenames"]["own"]
 		self.save(filename)	
