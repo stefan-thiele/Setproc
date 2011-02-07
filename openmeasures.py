@@ -62,7 +62,7 @@ class OpenJson(dict):
 	"""	
 	
 	############################
-	def load_json(self,filename,kind = None) :
+	def load_json(self,filename,kind = "cyc") :
 		"""
 		This function choose the good parser by reading the "kind" field contained in the metadata. If not it asks you the information if not given
 		"""

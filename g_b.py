@@ -267,13 +267,14 @@ class new_GB(Measure) :
 		self.pR = plot(array(HR[1][0:size(SA)]) + offset,2 * (array(SR)/(1.* norm) - 0.5), linewidth = 3, color = colr )
 
 	def get_cycle_trace(self,colr,offset) :
+		print "new version"
 		HA = self._A["hist"]
 		HR = self._R["hist"]
 		SA= sum_over(HA[0])
 		SR= sum_over(HR[0])
 		norm = self._A["sweep_number"]
 		self.pA = plot(array(HA[1][0:size(SA)])-offset,2 * (array(SA)/(1.* norm) - 0.5), linewidth = 3, color = colr )
-		self.pR = plot(array(HR[1][0:size(SA)]) + offset,2 * (array(SR)/(1.* norm) - 0.5), linewidth = 3, color = colr )
+		self.pR = plot(array(HR[1][0:size(SA)]) + offset, 2 * ((array(SR) - max(SR)) /(1.* norm) +  0.5)   , linewidth = 3, color = colr )
 
 	def newstat_A(self,statname) :
 		self._picA.new_stat(statname,self._A)
