@@ -7,10 +7,7 @@ class GB_gui(eta.HasTraits) :
 	
 	nbr_sweep = eta.Range(0,500,1)
 	width = eta.Int
-	"""
-	lunch = eta.Button
-	f = None
-	"""
+	
 	def __init__(self, A,width=9) :
 		self.width = width
 		self.a=A
@@ -20,15 +17,11 @@ class GB_gui(eta.HasTraits) :
 
 	def _nbr_sweep_changed(self) :
 		self.a.plot_curve(self.nbr_sweep, self.width)
-	"""
-	def _width_changed(self) :
-		self.a.plot_curve(self.nbr_sweep, self.width)
-	"""
 
 
 class GB_Open(Measure) :
 	"""
-	This is the new class Json file that should generate in an esasier way, the correct plot with the correct axis.
+	It generated an GB_Open object
 	"""
 	def __init__(self,filename,mode):
 		Measure.__init__(self,filename,mode)
