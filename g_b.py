@@ -71,6 +71,23 @@ class GB_Open(Measure) :
 		self["hist"] = [temp[0],temp[1]]
 		return True
 
+	def sanity_check(self) :
+		size_bias = size(self["bias"])
+		nbr = None
+		temp = 0
+		for i in range(self["sweep_number"]) :
+			size_data = size(self["data"][i])
+			if(size_bias != size_data and temp < abs(size_data - size_bias) ) :
+				temp = abs(size_data - size_bias)
+				nbr = i
+		if(nbr == None) :
+			print "\tPerfect matching"
+		else :
+			print "\tThe maximum difference is ",temp," points with the sweep ",nbr
+		return True
+				
+
+
 
 
 class Pic_Open(Measure) :
@@ -233,7 +250,7 @@ class new_GB(Measure) :
 			self["filenames"]["mode"] = mode
 			self["comments"] = "Data registred without the original Pic files"
 			self["with_pic"] = False
-		
+	
 
 	def load_files(self) :
 		self._A = GB_Open(self["filenames"]["A"],self["filenames"]["mode"])
@@ -241,7 +258,11 @@ class new_GB(Measure) :
 		if (self["with_pic"]) :
 			self._picA = Pic_Open(self["filenames"]["PicA"],self["filenames"]["mode"])
 			self._picR =  Pic_Open(self["filenames"]["PicR"],self["filenames"]["mode"])
-
+		print "Sanity checks"
+		print "* Trace"
+		self._A.sanity_check()
+		print "* Retrace"
+		self._R.sanity_check()
 
 	def get_stat(self,seuil,i_start) :
 		self._picA.get_stat(seuil,i_start)
