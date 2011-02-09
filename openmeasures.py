@@ -71,7 +71,7 @@ class OpenJson(dict):
 			done = False
 		except KeyError:
 			kind = input("There is no information concerning the kind of file. Could you provide it ?(cyc in case of statistic on one sweep and cyc_loc if the field has been swept back and forth around a specific position")
-		if(state) :
+		if(done) :
 			if kind == "cyc" : #this function will be soon deprecated
 				done = self.load_cyc_stat(monjson)
 			elif kind == "new": #this is the one that should always been used
