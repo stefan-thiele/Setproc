@@ -5,12 +5,13 @@ import os as os
 
 class GB_gui(eta.HasTraits) :
 	
-	nbr_sweep = eta.Range(0,500,1)
+	nbr_sweep = eta.Range(0,800,1)
 	width = eta.Int
 	
 	def __init__(self, A,width=9) :
 		self.width = width
 		self.a=A
+		self.nbr_sweep = 0
 
 	def _lunch_fired(self) :
 		self.a.plot_curve(self.nbr_sweep, self.width)
@@ -257,7 +258,7 @@ class new_GB(Measure) :
 		SR= sum_over(HR[0])
 		norm = self._A["sweep_number"]
 		self.pA = plot(array(HA[1][0:size(SA)])-offset,2 * (array(SA)/(1.* norm) - 0.5), linewidth = 3, color = colr )
-		self.pR = plot(array(HR[1][0:size(SA)]) + offset,2 * (array(SR)/(1.* norm) - 0.5), linewidth = 3, color = colr )
+		self.pR = plot(array(HR[1][0:size(SA)]) + offset, 2 * ((array(SR) - max(SR)) /(1.* norm) +  0.5)   , linewidth = 3, color = colr )
 
 	def get_cycle_trace(self,colr,offset) :
 		print "new version"
