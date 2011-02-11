@@ -52,22 +52,29 @@ class GB_Open(Measure) :
 		max_jump = max(jump)
 		if max_jump > seuil :
 			state = True	
-		return [ bsweep[jump.index(max_jump)], state]
+		return [ bsweep[jump.index(max_jump)],max_jump, state]
 
 	def get_sweep(self,nbr) :
 		return [self["bias"],self["data"][nbr]]
 
 	
 	def get_stat(self,seuil,i_start,w=9):
-		self["stat"] = []
+		self["stat"] = [[],[]]
 		for i in range(self["sweep_number"]): 
 			temp = self.get_jump(i,i_start,seuil,w)
-			if(temp[1]):
-				self["stat"].append(temp[0]) 
+			if(temp[2]):
+				self["stat"][0].append(temp[0]) 
+				self["stat"][1].append(temp[1])
 		return True
 	
-	def get_hist(self,nbr_pts,rge,stat_name) :
-		temp = hist(self[stat_name], nbr_pts,rge)
+	def get_hist(self,nbr_pts,rge,stat_name,seuil="all") :
+		stat_temp = copy(self[stat_name]).tolist()
+		size_stat_temp = size(stat_temp[0])
+		if(seuil != "all"):
+			for i in range(size_stat_temp) :
+				if(seuil > stat_temp[1][size_stat_temp - (i+1)]) :
+					stat_temp[0].pop(size_stat_temp - (i+1))
+		temp = histogram(stat_temp[0], nbr_pts,rge)
 		self["hist"] = [temp[0],temp[1]]
 		return True
 
