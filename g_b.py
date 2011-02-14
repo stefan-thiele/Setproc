@@ -279,6 +279,26 @@ class new_GB(Measure) :
 		self._picA.get_hist(nbr,rge,stat_name)
 		self._picR.get_hist(nbr,rge,stat_name)
 
+
+	def first_cycle_trace(self,nbr,rge,stat_name,colr,offset,seuil="all"):
+		
+		if(Cyc7_0._A.__contains__(stat_name) == False and stat_name == "stat") :
+			print "There is no statistic yet..."
+			if(seuil == "all"):
+				seuil = input("Seuil? : ")
+			i_start = input("Starting point? (200 recommended) : ")
+			w = input("Width of the filter? (usually 4) : ")
+			Cyc7_0._A.get_stat(seuil,i_start)
+			Cyc7_0._R.get_stat(seuil,i_start)
+		
+		if(Cyc7_0._A.__contains__(stat_name) == False):
+			print "There is no statitic corresponding to that name.. You have to generate it first using the _inter_stat method. "
+		else :
+			self._A.get_hist(nbr,rge,stat_name,seuil)
+			self._R.get_hist(nbr,rge,stat_name,seuil)
+			self.get_cycle_trace(colr,offset)
+
+
 	def get_cycle(self,colr,offset) :
 		HA = self._picA["hist"]
 		HR = self._picR["hist"]
@@ -289,7 +309,6 @@ class new_GB(Measure) :
 		self.pR = plot(array(HR[1][0:size(SA)]) + offset, 2 * ((array(SR) - max(SR)) /(1.* norm) +  0.5)   , linewidth = 3, color = colr )
 
 	def get_cycle_trace(self,colr,offset) :
-		print "new version"
 		HA = self._A["hist"]
 		HR = self._R["hist"]
 		SA= sum_over(HA[0])

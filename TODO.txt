@@ -1,2 +1,3 @@
 - Make a format for the measures object in the javascript files and have a name for each kind of measurements. Then modify openmeasures.py to take into account this modifications while always being able to open the old files.
 - To rename GB_open with a different name that would correspond to the nanoQT script name or the one contained in the javascript object measures.
+- Deprecate the Pic fonction so that we only generate trace and retrace without the corresponding pic files. A conversion function should be provided that would modified the *.bin files that have been generated with the previous constructors
