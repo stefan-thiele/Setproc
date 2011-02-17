@@ -27,21 +27,26 @@ class GB_Open(Measure) :
 	def __init__(self,filename,mode):
 		Measure.__init__(self,filename,mode)
 		
-	def plot_curve(self,nbr,w=9) :
+	def plot_curve(self,nbr,i_start,w=4) :
 		try :
 			self.fig.clear()
-			self.ax.clear()
+			self.ax1.clear()
+			self.ax2.clear()
 		except :
 			self.fig = figure()
-		X = self["bias"]
-		Y = self["data"][nbr]
-		si = size(self["bias"])
-		self.ax = self.fig.add_subplot(211)
-		plot(X,Y)
-		self.ax.set_xlim(X[0],X[si-1])
-		self.ax = self.fig.add_subplot(212)
-		self.ax.set_xlim(X[0],X[si-1])
-		plot(X[(w-1):si-(w-1)],pic_detect(Y,w))
+		X = self["bias"][i_start:]
+		Y = self["data"][nbr][i_start:]
+		si = size(self["bias"][i_start:])
+		self.ax1 = self.fig.add_subplot(211)
+		self.ax1.plot(X,Y)
+		self.ax1.set_xlim(X[0],X[si-1])
+		self.ax2 = self.fig.add_subplot(212)
+		self.ax2.plot(X[(w-1):si-(w-1)],pic_detect_2(Y,w))
+		self.ax2.set_xlim(X[0],X[si-1])
+		for i in get_fignums() :
+			figure(i)
+			draw()
+			show()
 		return True
 		
 	def get_jump(self,nbr,i_start,seuil,w=9) :
@@ -53,6 +58,20 @@ class GB_Open(Measure) :
 		if max_jump > seuil :
 			state = True	
 		return [ bsweep[jump.index(max_jump)],max_jump, state]
+
+	def get_jump_2(self,nbr,i_start,seuil,w=4) :
+		state = [False,False]
+		si = size(self["bias"])
+		bsweep = self["bias"][i_start+(w-1):si-(w-1)]
+		jump = pic_detect_2(self["data"][nbr][i_start:],w)
+		max_jump = max(jump)
+		min_jump = min(jump)
+		if min_jump < -1*seuil :
+			state[0] = True
+		if max_jump > seuil :
+			state[1] = True
+		return [ [ bsweep[jump.index(min_jump)], min_jump , state[0] ], [ bsweep[jump.index(max_jump)] , max_jump, state[1]]]
+
 
 	def get_sweep(self,nbr) :
 		return [self["bias"],self["data"][nbr]]

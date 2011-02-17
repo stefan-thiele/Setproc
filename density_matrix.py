@@ -29,8 +29,53 @@ class Density_Open(ToSaveObject) :
 
 
 	def get_stat(self,seuil,i_start,w) :
-		self["trace"].get_stat(seuil,i_start,w)
-		self["retrace"].get_stat(seuil,i_start,w)
+		self["UP"] = [[],[]]
+		self["DOWN"] = [[],[]]
+		self["sequence"] = []
+		sweep_number = self["trace"]["sweep_number"]
+		for i in range(sweep_number) :
+			
+			Down, Up = self["trace"].get_jump_2(i,i_start,seuil,w)
+			if(Up[2]) :
+				self["UP"][0].append(Up[0])
+				self["UP"][1].append(Up[1])
+			if(Down[2]) :
+				self["DOWN"][0].append(Down[0])
+				self["DOWN"][1].append(Down[1])
+
+			if(Down[2] and Up[2] ) :
+				if(Down[0]<Up[0]) :
+					self["sequence"].append(0)
+					self["sequence"].append(1)
+				else :
+					self["sequence"].append(1)
+					self["sequence"].append(0)
+			elif(Down[2]):
+				self["sequence"].append(0)
+			elif(Up[2]) :
+				self["sequence"].append(1)
+
+			Down,Up = self["retrace"].get_jump_2(i,i_start,seuil,w)
+			if(Up[2]) :
+				self["UP"][0].append(Up[0])
+				self["UP"][1].append(Up[1])
+			if(Down[2]) :
+				self["DOWN"][0].append(Down[0])
+				self["DOWN"][1].append(Down[1])
+			
+			if(Down[2] and Up[2] ) :
+				if(Down[0]<Up[0]) :
+					self["sequence"].append(1)
+					self["sequence"].append(0)
+				else :
+					self["sequence"].append(0)
+					self["sequence"].append(1)
+			elif(Down[2]):
+				self["sequence"].append(0)
+			elif(Up[2]) :
+				self["sequence"].append(1)
+
+		return True
 
 	def correlation_stat(self) :
 		X1 = copy(self["trace"]["stat"][0])
@@ -68,7 +113,7 @@ class Density_Open(ToSaveObject) :
 		X1 = copy(self["trace"]["stat"][0])
 		sX1 =size(X1)
 		X1 = X1.tolist()
-		Y1 = copy(self["trace"]["stat"][0])
+		Y1 = copy(self["retrace"]["stat"][0])
 		sY1 = size(Y1)
 		Y1 = Y1.tolist()
 		if( sX1 > sY1 ):
@@ -82,7 +127,7 @@ class Density_Open(ToSaveObject) :
 		X1 = X1.tolist()
 		X1.pop(0)
 		sX1 =size(X1)
-		Y1 = copy(self["trace"]["stat"][0])
+		Y1 = copy(self["retrace"]["stat"][0])
 		sY1 = size(Y1)
 		Y1 = Y1.tolist()
 		if( sX1 > sY1 ):

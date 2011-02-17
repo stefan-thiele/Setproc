@@ -404,3 +404,23 @@ def sum_over(data) :
 		result.append(sum(data[0:i+1]))
 	
 	return result
+
+
+
+def merge_GB(GB_array) :
+	GB_nbr = size(GB_array)
+	GB_order = range(1,GB_nbr,1)
+	if( size(GB_nbr)>1 ) :
+		for i in GB_order :
+			print i
+			whole_size = size(GB_array[i]["data"])
+			sweep_size = size(GB_array[i]["data"][1])
+			current_array_size = whole_size/sweep_size
+			print current_array_size
+			for j in range(current_array_size) :
+				GB_array[0]["data"].append(GB_array[i]["data"][j])
+				GB_array[0]["sweep_number"] += GB_array[i]["sweep_number"] 
+	return GB_array[0]
+
+
+

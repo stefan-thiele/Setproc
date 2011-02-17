@@ -8,6 +8,7 @@ import simplejson as json
 import matplotlib.lines as mpllines
 import pickle
 import cPickle
+import enthought.mayavi.mlab as mayavi
 from matplotlib.colors import LogNorm
 from scipy import constants as pc
 from scipy import*
