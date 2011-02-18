@@ -9,3 +9,5 @@
 * Redefine the OpeanMeasure with the ToSaveOnject Class to have a more coherent code.
 
 * Integrate mayavi plot so that professional 3d histogram can be plotted
+
+* Create a function to redraw all the figures

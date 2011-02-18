@@ -59,6 +59,13 @@ class GB_Open(Measure) :
 			state = True	
 		return [ bsweep[jump.index(max_jump)],max_jump, state]
 
+	def get_jump_3(self,nbr,i_start,seuil,span,w=4) :
+		si = size(sefl["bias"])
+		bsweep = self["bias"][i_start+(w-1):si-(w-1)]
+		jump = pic_detect(self["data"][nbr][i_start:],w)
+		result = get_jump(bsweep,jump,seuil,span)
+		return result
+
 	def get_jump_2(self,nbr,i_start,seuil,w=4) :
 		state = [False,False]
 		si = size(self["bias"])

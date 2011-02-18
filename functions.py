@@ -424,3 +424,40 @@ def merge_GB(GB_array) :
 
 
 
+def check_span(X,Y,span):
+	size_X = size(X)
+	Xloc = list(X)
+	Yloc = list(Y)
+	for i in range(size_X-2) :
+		if(abs(Xloc[size_X - (i+1)] - Xloc[size_X - (i+2)]) < span ) :
+			if(Yloc[size_X - (i+1)] > Yloc[size_X - (i+2)]) :
+				Xloc.pop(size_X - (i+2))
+				Yloc.pop(size_X - (i+2))
+			else :	
+				Xloc.pop(size_X - (i+1))
+				Yloc.pop(size_X - (i+1))
+	return [Xloc,Yloc] 
+
+def max_local(X,Y,separation) :
+	result = [[],[]]
+	size_array = size(Y)
+	for i in range(size_array) :
+		if(i >0 and i < size_array-1 and (Y[i-1] < Y[i] and Y[i] > Y[i+1])) :
+			result[0].append(X[i])
+			result[1].append(Y[i])
+	result = check_span(result[0],result[1],separation) 
+
+	return result
+
+
+def get_jump(X,Y,seuil,span) :
+	jumps = max_local(X,Y,span)
+	Xs = list(jumps[0])
+	Ys = list(jumps[1])
+	si_Ys = size(Ys)
+	for i in range(si_Ys) :
+		if(Ys[si_Ys - (i+1)] < seuil ) :
+			Ys.pop(si_Ys - (i+1))
+			Xs.pop(si_Ys - (i+1))
+	return [Xs,Ys]
+

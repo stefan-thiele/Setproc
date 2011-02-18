@@ -77,61 +77,13 @@ class Density_Open(ToSaveObject) :
 
 		return True
 
-	def correlation_stat(self) :
-		X1 = copy(self["trace"]["stat"][0])
-		sX1 = size(X1)
-		Y1 = copy(self["retrace"]["stat"][0])
-		sY1 = size(Y1)
-		X1 = X1.tolist()
-		Y1 = Y1.tolist()
-		X2= copy(X1)
-		X2 = X2.tolist()
-		X2.pop(0)
-		sX2 = size(X2)
-		Y2 = copy(Y1)
-		Y2 = Y2.tolist()
-		if( sX1 > sY1 ):
-			X1 = X1[:sY1]
-		else :
-			Y1 = Y1[:sX1]
-		
-		if( sX2 > sY1) :
-			X2 = X2[:sY1]
-		else :
-			Y2 = Y2[:sX2]
-		self["stat"] = dict()
-		self["stat"]["X"] = X1
-		self["stat"]["Y"] = Y1
-		for i in range(size(X2)) :
-			self["stat"]["X"].append(X2[i])
-		for i in range(size(Y2)) :
-			self["stat"]["Y"].append(Y2[i])
+	def get_stat_2(self,seuil,span,i_start,w=4) :
+		self["UP2"] = [[],[]]
+		self["DOWN2"] = [[],[]]
+		sweep_number = self["trace"]["sweep_number"]
+
+		for i in range(sweep_number) :
+			
+			temp_stat = self["trace"].get_jump_3(i,i_start,seuil,span,w)
 
 		return True
-
-	def correlation_trace(self) :
-		X1 = copy(self["trace"]["stat"][0])
-		sX1 =size(X1)
-		X1 = X1.tolist()
-		Y1 = copy(self["retrace"]["stat"][0])
-		sY1 = size(Y1)
-		Y1 = Y1.tolist()
-		if( sX1 > sY1 ):
-			X1 = X1[:sY1]
-		else :
-			Y1 = Y1[:sX1]
-		return X1,Y1
-	
-	def correlation_retrace(self) :
-		X1 = copy(self["trace"]["stat"][0])
-		X1 = X1.tolist()
-		X1.pop(0)
-		sX1 =size(X1)
-		Y1 = copy(self["retrace"]["stat"][0])
-		sY1 = size(Y1)
-		Y1 = Y1.tolist()
-		if( sX1 > sY1 ):
-			X1 = X1[:sY1]
-		else :
-			Y1 = Y1[:sX1]
-		return X1,Y1
