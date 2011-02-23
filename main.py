@@ -15,6 +15,7 @@ from scipy import*
 from numpy import*
 from pylab import *
 from matplotlib.colors import LinearSegmentedColormap
+from copy import deepcopy
 # import ipy_profile_sh
 execfile("/home/romain/setproc/functions.py")
 execfile("/home/romain/setproc/openmeasures.py")

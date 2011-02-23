@@ -48,7 +48,8 @@ class GB_Open(Measure) :
 			draw()
 			show()
 		return True
-		
+
+
 	def get_jump(self,nbr,i_start,seuil,w=9) :
 		state = False
 		si = size(self["bias"])
@@ -110,17 +111,30 @@ class GB_Open(Measure) :
 		temp = 0
 		for i in range(self["sweep_number"]) :
 			size_data = size(self["data"][i])
-			if(size_bias != size_data and temp < abs(size_data - size_bias) ) :
-				temp = abs(size_data - size_bias)
+
+			if (size_data < size_bias ) :
 				nbr = i
+				for j in range(size_bias - size_data) :
+					#recopie la derniere valeur pour completer
+					self["data"][i].append(self["data"][i][size_data-j-1])
+			if (size_data > size_bias ) :
+
+				#recopie la derniere valeur pour completer
+				self["data"][i] = self["data"][i][0:size_bias]
+				nbr = i
+			if (abs(size_data - size_bias) > temp ) :
+
+				temp = abs(size_data - size_bias)
 		if(nbr == None) :
 			print "\tPerfect matching"
 		else :
 			print "\tThe maximum difference is ",temp," points with the sweep ",nbr
+		
 		return True
 				
 
-
+	def __add__(self,other) :
+		return merge_GB([self,other])
 
 
 class Pic_Open(Measure) :

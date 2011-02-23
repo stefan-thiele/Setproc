@@ -35,8 +35,8 @@ class TracePolar(Measure) :
 			if (sit < sib ) :
 				for j in range(sib - sit) :
 					#recopie la derniere valeur pour completer
-					self["data"][i].append(self["data"][i][sit-1])
-			if (sit < sib ) :
+					self["data"][i].append(self["data"][i][sit-j])
+			if (sit > sib ) :
 				#recopie la derniere valeur pour completer
 				self["data"][i] = self["data"][i][0:sib]
 
