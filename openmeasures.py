@@ -50,7 +50,8 @@ class Measure(dict) :
 		elif mode == "Bin" :
 			temp = OpenBin(filename)
 		for x in temp :
-			self[x] = temp[x]
+			self[x] = deepcopy(temp[x])
+		del(temp)
 		
 
 	def save(self,savename) :

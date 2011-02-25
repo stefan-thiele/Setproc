@@ -40,9 +40,9 @@ class Density_Open(ToSaveObject) :
 
 
 	def get_stat(self,seuil,i_start,w) :
-		self["UP"] = [[],[]]
-		self["DOWN"] = [[],[]]
-		self["sequence"] = [0]
+		self["UP"] = [[],[],[]]
+		self["DOWN"] = [[],[],[]]
+		self["sequence"] = []
 		sweep_number = self["trace"]["sweep_number"]
 		for i in range(sweep_number) :
 			
@@ -51,76 +51,96 @@ class Density_Open(ToSaveObject) :
 			#check the sequence and correct errors
 			if(Down[2] and Up[2] ) :
 				if(Down[0]<Up[0]) :
-					if(self["sequence"][-1] == 0 ) :
-						self["DOWN"][0].pop(-1)
-						self["DOWN"][1].pop(-1)
-						self["sequence"].pop(-1)
+					if(size(self["sequence"])>0) :
+						if(self["sequence"][-1] == 0 ) :
+							self["DOWN"][0].pop(-1)
+							self["DOWN"][1].pop(-1)
+							self["DOWN"][2].pop(-1)
+							self["sequence"].pop(-1)
 					self["sequence"].append(0)
 					self["sequence"].append(1)
 				else :
-					if(self["sequence"][-1] == 1) :
-						self["UP"][0].pop(-1)
-						self["UP"][1].pop(-1)
-						self["sequence"].pop(-1)
+					if(size(self["sequence"])>0) :
+						if(self["sequence"][-1] == 1 ) :
+							self["UP"][0].pop(-1)
+							self["UP"][1].pop(-1)
+							self["UP"][2].pop(-1)
+							self["sequence"].pop(-1)
 					self["sequence"].append(1)
 					self["sequence"].append(0)
 			elif(Down[2]):
-				if(self["sequence"][-1] == 0 ) :
-					self["DOWN"][0].pop(-1)
-					self["DOWN"][1].pop(-1)
-					self["sequence"].pop(-1)
+				if(size(self["sequence"])>0) :
+					if(self["sequence"][-1] == 0 ) :
+						self["DOWN"][0].pop(-1)
+						self["DOWN"][1].pop(-1)
+						self["DOWN"][2].pop(-1)
+						self["sequence"].pop(-1)
 				self["sequence"].append(0)
 			elif(Up[2]) :
-				if(self["sequence"][-1] == 1) :
-					self["UP"][0].pop(-1)
-					self["UP"][1].pop(-1)
-					self["sequence"].pop(-1)
+				if(size(self["sequence"])>0) :
+					if(self["sequence"][-1] == 1 ) :
+						self["UP"][0].pop(-1)
+						self["UP"][1].pop(-1)
+						self["UP"][2].pop(-1)
+						self["sequence"].pop(-1)
 				self["sequence"].append(1)
 			#once the sequence have been checked, add the stat
 			if(Up[2]) :
 				self["UP"][0].append(Up[0])
 				self["UP"][1].append(Up[1])
+				self["UP"][2].append("trace")
 			if(Down[2]) :
 				self["DOWN"][0].append(Down[0])
 				self["DOWN"][1].append(Down[1])
+				self["DOWN"][2].append("trace")
 
 			#RETRACE STAT
 			Down,Up = self["retrace"].get_jump_2(i,i_start,seuil,w)
 			#check sequence
 			if(Down[2] and Up[2] ) :
 				if(Down[0]<Up[0]) :
-					if(self["sequence"][-1] == 1) :
-						self["UP"][0].pop(-1)
-						self["UP"][1].pop(-1)
-						self["sequence"].pop(-1)
+					if(size(self["sequence"])>0) :
+						if(self["sequence"][-1] == 1 ) :
+							self["UP"][0].pop(-1)
+							self["UP"][1].pop(-1)
+							self["UP"][2].pop(-1)
+							self["sequence"].pop(-1)
 					self["sequence"].append(1)
 					self["sequence"].append(0)
 				else :
-					if(self["sequence"][-1] == 0 ) :
-						self["DOWN"][0].pop(-1)
-						self["DOWN"][1].pop(-1)
-						self["sequence"].pop(-1)
+					if(size(self["sequence"])>0) :
+						if(self["sequence"][-1] == 0 ) :
+							self["DOWN"][0].pop(-1)
+							self["DOWN"][1].pop(-1)
+							self["DOWN"][2].pop(-1)
+							self["sequence"].pop(-1)
 					self["sequence"].append(0)
 					self["sequence"].append(1)
 			elif(Down[2]):
-				if(self["sequence"][-1] == 0 ) :
-					self["DOWN"][0].pop(-1)
-					self["DOWN"][1].pop(-1)
-					self["sequence"].pop(-1)
+				if(size(self["sequence"])>0) :
+					if(self["sequence"][-1] == 0 ) :
+						self["DOWN"][0].pop(-1)
+						self["DOWN"][1].pop(-1)
+						self["DOWN"][2].pop(-1)
+						self["sequence"].pop(-1)
 				self["sequence"].append(0)
 			elif(Up[2]) :
-				if(self["sequence"][-1] == 1) :
-					self["UP"][0].pop(-1)
-					self["UP"][1].pop(-1)
-					self["sequence"].pop(-1)
+				if(size(self["sequence"])>0) :
+					if(self["sequence"][-1] == 1 ) :
+						self["UP"][0].pop(-1)
+						self["UP"][1].pop(-1)
+						self["UP"][2].pop(-1)
+						self["sequence"].pop(-1)
 				self["sequence"].append(1)
 			#once the sequence has been checked, add stat
 			if(Up[2]) :
 				self["UP"][0].append(Up[0])
 				self["UP"][1].append(Up[1])
+				self["UP"][2].append("retrace")
 			if(Down[2]) :
 				self["DOWN"][0].append(Down[0])
 				self["DOWN"][1].append(Down[1])
+				self["DOWN"][2].append("retrace")
 			
 
 		return True
@@ -134,7 +154,7 @@ class Density_Open(ToSaveObject) :
 			trace = self["trace"].get_jump(i,i_start,seuil,w)
 			retrace = self["retrace"].get_jump(i,i_start,seuil,w)
 			if(trace[2] ):
-				if( size(self["sequence2"]) > 0 ) :
+				if( size(self["sequence2"]) > 0 and size(self["DOWN"][0]) > 0 ) :
 					if(self["sequence"][-1] == 0) :
 						self["sequence"].pop(-1)
 						self["DOWN2"][0].pop(-1)
@@ -143,7 +163,7 @@ class Density_Open(ToSaveObject) :
 				self["DOWN2"][1].append(trace[1])
 				self["sequence"].append(0)
 			if(retrace[2] ):
-				if( size(self["sequence2"]) > 0 ) :
+				if( size(self["sequence2"]) > 0 and size(self["UP"][0]) > 0 ) :
 					if(self["sequence"][-1] == 1) :
 						self["sequence"].pop(-1)
 						self["UP2"][0].pop(-1)
@@ -152,3 +172,19 @@ class Density_Open(ToSaveObject) :
 				self["UP2"][1].append(retrace[1])
 				self["sequence"].append(1)
 		return True
+
+	def get_hist(self,points,rge,shift_B,shift_trace) :
+		tempUp = deep_copy(self["UP"])
+		tempDown = deep_copy(self["DOWN"])
+		siup = size(tempUp[0])
+		sidown = size(tempDown[0])
+		for i in range(siup) :
+			if (tempUp[2][i] == "retrace") :
+				tempUp[0][i] = tempUp[0][i] - shift_B
+		for i in range(sidown) :
+			if (tempDown[2][i] == "retrace") :
+				tempDown[0][i] = tempDown[0][i] - shift_B
+		min_si = min(siup,sidown)
+		self["Hist"] = histogram2d(tempDown[0][:min_si-shift_trace],tempUp[0][shift_trace:min_si],points,rge)
+		
+
