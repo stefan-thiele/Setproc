@@ -3,6 +3,10 @@
 @uthor : Romain Vincent
 This file is the one that gather all the files needed for the postprocessing of the data
 """
+
+folder = "/home/romain/setproc/"
+
+
 #import enthought.mayavi.mlab as emm
 import simplejson as json
 import matplotlib.lines as mpllines
@@ -16,11 +20,18 @@ from numpy import*
 from pylab import *
 from matplotlib.colors import LinearSegmentedColormap
 from copy import deepcopy
+import sys
+sys.path.append(folder+"lib/")
+import dataprocess as dp
+
 # import ipy_profile_sh
-execfile("/home/romain/setproc/functions.py")
-execfile("/home/romain/setproc/openmeasures.py")
-execfile("/home/romain/setproc/map.py")
-execfile("/home/romain/setproc/polar.py")
-execfile("/home/romain/setproc/g_b.py")
-execfile("/home/romain/setproc/HysteresisVg.py")
-execfile("/home/romain/setproc/dataprocess.py")
+
+
+execfile(folder+"functions.py")
+execfile(folder+"openmeasures.py")
+execfile(folder+"map.py")
+execfile(folder+"polar.py")
+execfile(folder+"g_b.py")
+execfile(folder+"HysteresisVg.py")
+execfile(folder+"movingaverage.py")
+execfile(folder+"dataprocess.py")
