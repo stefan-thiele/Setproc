@@ -2,7 +2,6 @@ import enthought.traits.api as eta
 import enthought.traits.ui.api as etua
 import os as os
 
-
 class GB_gui(eta.HasTraits) :
 	
 	nbr_sweep = eta.Range(0,800,1)
@@ -72,7 +71,7 @@ class GB_Open(Measure) :
 		si = size(self["bias"])
 		bsweep = self["bias"][i_start+(w-1):si-(w-1)]
 		temp_array = array(self["data"][nbr][i_start:], dtype = np.float)
-		jump = dp.fast_pic_detect(temp_array,w)
+		jump = pic_detect_2(temp_array,w)
 		max_jump = jump.max()
 		min_jump = jump.min()
 		if min_jump < -1*seuil :

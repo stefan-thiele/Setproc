@@ -7,10 +7,12 @@ cdef extern from "numpy/arrayobject.h":
 import_array() 
 
 
+
+
 def sum(np.ndarray[np.float64_t, ndim = 1] data) :
 	cdef int i
 	cdef float s = 0
-	for i in range(np.size(data)) :
+	for i in xrange(np.size(data)) :
 		s+= data[i]
 	return s
 
@@ -46,7 +48,7 @@ def fast_pic_detect(np.ndarray[np.float64_t, ndim = 1] data, int width) :
 	cdef np.ndarray[np.float_t, ndim =1] step1
 	cdef np.ndarray[np.float_t, ndim = 1] result
 	cdef np.ndarray[np.float_t, ndim = 1] diff_sweep = np.zeros(si_data - (width +1))
-	step1 = fast_moving_average(data,width)
+	step1 = moving_average(data,width)
 	diff_sweep = np.diff(data[width/2 +1 :si_data - width/2])
-	result =  - np.power(fast_moving_average(step1,width),[2]) + fast_moving_average(np.power(step1,[2]),width)
+	result =  - np.power(moving_average(step1,width),[2]) + moving_average(np.power(step1,[2]),width)
 	return diff_sweep * result

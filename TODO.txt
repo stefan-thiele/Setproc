@@ -1,3 +1,5 @@
+* Finalize the test on the new library dataprocess (particularly on the moving average and drift issues)
+
 * Make a format for the measures object in the javascript files and have a name for each kind of measurements. Then modify openmeasures.py to take into account this modifications while always being able to open the old files.
 
 * To rename GB_open with a different name that would correspond to the nanoQT script name or the one contained in the javascript object measures.
@@ -8,6 +10,6 @@
 
 * Redefine the OpeanMeasure with the ToSaveOnject Class to have a more coherent code.
 
-* Integrate mayavi plot so that professional 3d histogram can be plotted
+* Integrate mayavi plot so that professional 3d histogram can be plotted (interest to assess) 
 
 * Create a function to redraw all the figures

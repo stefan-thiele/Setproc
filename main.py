@@ -28,6 +28,7 @@ import dataprocess as dp
 
 
 execfile(folder+"functions.py")
+execfile(folder+"trycjson.py")
 execfile(folder+"openmeasures.py")
 execfile(folder+"map.py")
 execfile(folder+"polar.py")
