@@ -72,13 +72,13 @@ class GB_Open(Measure) :
 		bsweep = self["bias"][i_start+(w-1):si-(w-1)]
 		temp_array = array(self["data"][nbr][i_start:], dtype = np.float)
 		jump = pic_detect_2(temp_array,w)
-		max_jump = jump.max()
-		min_jump = jump.min()
+		max_jump = max(jump)
+		min_jump = min(jump)
 		if min_jump < -1*seuil :
 			state[0] = True
 		if max_jump > seuil :
 			state[1] = True
-		return [ [ bsweep[jump.argmin()], min_jump , state[0] ], [ bsweep[jump.argmax()] , max_jump, state[1]]]
+		return [ [ bsweep[jump.index(min_jump)], min_jump , state[0],nbr ], [ bsweep[jump.index(max_jump)] , max_jump, state[1],nbr]]
 
 
 	def get_sweep(self,nbr) :
