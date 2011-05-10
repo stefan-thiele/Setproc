@@ -7,7 +7,7 @@ This file is the one that gather all the files needed for the postprocessing of 
 folder = "/home/romain/setproc/"
 
 
-#import enthought.mayavi.mlab as emm
+import enthought.mayavi.mlab as emm
 import simplejson as json
 import matplotlib.lines as mpllines
 import pickle

@@ -2,9 +2,39 @@
 Here are store all the function for data processing
 """
 
-
-
 def pic_detect(sweep,width):
+	"""This function detects the pic. The working principle is the following :
+                                                         _
+                       _            |---- (step1)^2 -- _| |_ ---(step2)--|
+	--(sweep)->  _| |_ -(step1)-|       _                           (-) ----> result
+                                    |-----_| |_ --(step3)-- (step3)^2 ---|
+
+	The width in argument is the one of the gate function
+	"""
+	type(sweep)
+	si_sweep = size(sweep)
+	step1 = []
+	step1carre = []
+	result = []
+	iter_nbr = 0
+
+	step1_tmp = movingaverage(sweep, width, data_is_list = None, avoid_fp_drift = False)
+	for i in step1_tmp :
+		step1.append(i)
+		step1carre.append(i**2)
+	
+	step2_temp = movingaverage(step1carre, width, data_is_list = None, avoid_fp_drift = False)
+	step3_tmp = movingaverage(step1, width, data_is_list = None, avoid_fp_drift = False)
+
+	for j in step3_tmp :
+		result.append(step2_temp.next() - j**2)
+		
+
+	return result
+
+
+
+def old_pic_detect(sweep,width):
 	"""This function detects the pic. The working principle is the following :
                                                          _
                        _            |---- (step1)^2 -- _| |_ ---(step2)--|

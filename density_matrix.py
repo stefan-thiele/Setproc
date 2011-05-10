@@ -50,178 +50,171 @@ class Density_Open(ToSaveObject) :
 
 
 	def get_stat(self,seuil,i_start,w) :
-		self["UP"] = [[],[],[],[]]
-		self["DOWN"] = [[],[],[],[]]
-		self["sequence"] = []
+		self["detection"] = [[],[],[],[],[]]
 		sweep_number = self.trace["sweep_number"]
 		for i in range(sweep_number) :
 			
 			#TRACE STAT
 			Down, Up = self.trace.get_jump_2(i,i_start,seuil,w)
-			#check the sequence and correct errors
 			if(Down[2] and Up[2] ) :
 				if(Down[0]<Up[0]) :
-					if(size(self["sequence"])>0) :
-						if(self["sequence"][-1] == 0 ) :
-							self["DOWN"][0].pop(-1)
-							self["DOWN"][1].pop(-1)
-							self["DOWN"][2].pop(-1)
-							self["DOWN"][3].pop(-1)
-							self["sequence"].pop(-1)
-					self["sequence"].append(0)
-					self["sequence"].append(1)
+					self["detection"][0].append(Down[0])
+					self["detection"][1].append(Down[1])
+					self["detection"][2].append("trace")
+					self["detection"][3].append(Down[3])
+					self["detection"][4].append('down')
+					self["detection"][0].append(Up[0])
+					self["detection"][1].append(Up[1])
+					self["detection"][2].append("trace")
+					self["detection"][3].append(Up[3])
+					self["detection"][4].append("up")
 				else :
-					if(size(self["sequence"])>0) :
-						if(self["sequence"][-1] == 1 ) :
-							self["UP"][0].pop(-1)
-							self["UP"][1].pop(-1)
-							self["UP"][2].pop(-1)
-							self["UP"][3].pop(-1)
-							self["sequence"].pop(-1)
-					self["sequence"].append(1)
-					self["sequence"].append(0)
-			elif(Down[2]):
-				if(size(self["sequence"])>0) :
-					if(self["sequence"][-1] == 0 ) :
-						self["DOWN"][0].pop(-1)
-						self["DOWN"][1].pop(-1)
-						self["DOWN"][2].pop(-1)
-						self["DOWN"][3].pop(-1)
-						self["sequence"].pop(-1)
-				self["sequence"].append(0)
+					self["detection"][0].append(Up[0])
+					self["detection"][1].append(Up[1])
+					self["detection"][2].append("trace")
+					self["detection"][3].append(Up[3])
+					self["detection"][4].append('up')
+					self["detection"][0].append(Down[0])
+					self["detection"][1].append(Down[1])
+					self["detection"][2].append("trace")
+					self["detection"][3].append(Down[3])
+					self["detection"][4].append("down")
 			elif(Up[2]) :
-				if(size(self["sequence"])>0) :
-					if(self["sequence"][-1] == 1 ) :
-						self["UP"][0].pop(-1)
-						self["UP"][1].pop(-1)
-						self["UP"][2].pop(-1)
-						self["UP"][3].pop(-1)
-						self["sequence"].pop(-1)
-				self["sequence"].append(1)
-			#once the sequence have been checked, add the stat
-			if(Up[2]) :
-				self["UP"][0].append(Up[0])
-				self["UP"][1].append(Up[1])
-				self["UP"][2].append("trace")
-				self["UP"][3].append(Up[3])
-			if(Down[2]) :
-				self["DOWN"][0].append(Down[0])
-				self["DOWN"][1].append(Down[1])
-				self["DOWN"][2].append("trace")
-				self["DOWN"][3].append(Down[3])
+				self["detection"][0].append(Up[0])
+				self["detection"][1].append(Up[1])
+				self["detection"][2].append("trace")
+				self["detection"][3].append(Up[3])
+				self["detection"][4].append("up")
+			elif(Down[2]) :
+				self["detection"][0].append(Down[0])
+				self["detection"][1].append(Down[1])
+				self["detection"][2].append("trace")
+				self["detection"][3].append(Down[3])
+				self["detection"][4].append("down")
 
 			#RETRACE STAT
 			Down,Up = self.retrace.get_jump_2(i,i_start,seuil,w)
-			#check sequence
 			if(Down[2] and Up[2] ) :
-				if(Down[0]<Up[0]) :
-					if(size(self["sequence"])>0) :
-						if(self["sequence"][-1] == 1 ) :
-							self["UP"][0].pop(-1)
-							self["UP"][1].pop(-1)
-							self["UP"][2].pop(-1)
-							self["UP"][3].pop(-1)
-							self["sequence"].pop(-1)
-					self["sequence"].append(1)
-					self["sequence"].append(0)
+				if(Down[0] > Up[0]) :
+					self["detection"][0].append(Down[0])
+					self["detection"][1].append(Down[1])
+					self["detection"][2].append("retrace")
+					self["detection"][3].append(Down[3])
+					self["detection"][4].append("down")
+					self["detection"][0].append(Up[0])
+					self["detection"][1].append(Up[1])
+					self["detection"][2].append("retrace")
+					self["detection"][3].append(Up[3])
+					self["detection"][4].append("up")
 				else :
-					if(size(self["sequence"])>0) :
-						if(self["sequence"][-1] == 0 ) :
-							self["DOWN"][0].pop(-1)
-							self["DOWN"][1].pop(-1)
-							self["DOWN"][2].pop(-1)
-							self["DOWN"][3].pop(-1)
-							self["sequence"].pop(-1)
-					self["sequence"].append(0)
-					self["sequence"].append(1)
-			elif(Down[2]):
-				if(size(self["sequence"])>0) :
-					if(self["sequence"][-1] == 0 ) :
-						self["DOWN"][0].pop(-1)
-						self["DOWN"][1].pop(-1)
-						self["DOWN"][2].pop(-1)
-						self["DOWN"][3].pop(-1)
-						self["sequence"].pop(-1)
-				self["sequence"].append(0)
+					self["detection"][0].append(Up[0])
+					self["detection"][1].append(Up[1])
+					self["detection"][2].append("retrace")
+					self["detection"][3].append(Up[3])
+					self["detection"][4].append("up")
+					self["detection"][0].append(Down[0])
+					self["detection"][1].append(Down[1])
+					self["detection"][2].append("retrace")
+					self["detection"][3].append(Down[3])
+					self["detection"][4].append("down")
 			elif(Up[2]) :
-				if(size(self["sequence"])>0) :
-					if(self["sequence"][-1] == 1 ) :
-						self["UP"][0].pop(-1)
-						self["UP"][1].pop(-1)
-						self["UP"][2].pop(-1)
-						self["UP"][3].pop(-1)
-						self["sequence"].pop(-1)
-				self["sequence"].append(1)
-			#once the sequence has been checked, add stat
-			if(Up[2]) :
-				self["UP"][0].append(Up[0])
-				self["UP"][1].append(Up[1])
-				self["UP"][2].append("retrace")
-				self["UP"][3].append(Up[3])
-			if(Down[2]) :
-				self["DOWN"][0].append(Down[0])
-				self["DOWN"][1].append(Down[1])
-				self["DOWN"][2].append("retrace")
-				self["DOWN"][3].append(Down[3])
+				self["detection"][0].append(Up[0])
+				self["detection"][1].append(Up[1])
+				self["detection"][2].append("retrace")
+				self["detection"][3].append(Up[3])
+				self["detection"][4].append("up")
+			elif(Down[2]) :
+				self["detection"][0].append(Down[0])
+				self["detection"][1].append(Down[1])
+				self["detection"][2].append("retrace")
+				self["detection"][3].append(Down[3])
+				self["detection"][4].append("down")
 			
 
 		return True
 
-	def get_stat_2(self,seuil,i_start,w=4) :
-		self["UP2"] = [[],[]]
-		self["DOWN2"] = [[],[]]
-		self["sequence2"] = []
-		sweep_number = self.trace["sweep_number"]
-		for i in range(sweep_number) :
-			trace = self.trace.get_jump(i,i_start,seuil,w)
-			retrace = self.retrace.get_jump(i,i_start,seuil,w)
-			if(trace[2] ):
-				if( size(self["sequence2"]) > 0 and size(self["DOWN"][0]) > 0 ) :
-					if(self["sequence2"][-1] == 0) :
-						self["sequence2"].pop(-1)
-						self["DOWN2"][0].pop(-1)
-						self["DOWN2"][1].pop(-1)
-				self["DOWN2"][0].append(trace[0])
-				self["DOWN2"][1].append(trace[1])
-				self["sequence2"].append(0)
-			if(retrace[2] ):
-				if( size(self["sequence2"]) > 0 and size(self["UP"][0]) > 0 ) :
-					if(self["sequence2"][-1] == 1) :
-						self["sequence2"].pop(-1)
-						self["UP2"][0].pop(-1)
-						self["UP2"][1].pop(-1)
-				self["UP2"][0].append(retrace[0])
-				self["UP2"][1].append(retrace[1])
-				self["sequence2"].append(1)
+
+	def plot_Map_H(self,kind,trans,Hmin,stepH):
+		temp = [[],[]]
+		for i in range(size(self["detection"][0])):
+			if self["detection"][2][i] == kind and self["detection"][4][i] == trans :
+				temp[0].append(Hmin + self["detection"][3][i] * stepH)
+				temp[1].append(self["detection"][0][i])
+		return temp
+
+	def get_hist(self,points,rge,shift_B,shift_trace=1):
+		temp = deep_copy(self["detection"])
+		siup = size(temp[0])
+		for i in range(siup) :
+			if (temp[2][i] == "retrace") :
+				temp[0][i] = temp[0][i] -shift_B
+		return histogram2d(temp[0][:siup-shift_trace],temp[0][shift_trace:siup],points,rge)
+
+	def get_direct_trans(self,Tr) :
+		self["direct_trans"] = [[],[]]
+		for i in range(size(self["detection"][0])-2) :
+			if abs(self["detection"][0][i+1]) > Tr :
+				self["direct_trans"][0].append(self["detection"][0][i])
+				self["direct_trans"][1].append(self["detection"][0][i+2])
+
+
+	def get_A_R(self) :
+		self["AvsR"] = [[],[]]
+		for i in range(size(self["detection"][0])) :
+			print i
+			for j in range(size(self["detection"][0])-(i+1)) :
+				check = self["detection"][3][j+i+1]-1
+				if self["detection"][3][i] == check :
+					if self["detection"][2][i] == "retrace" and self["detection"][2][j+i+1] == "trace" :
+						self["AvsR"][0].append(self["detection"][0][i])
+						self["AvsR"][1].append(self["detection"][0][j+i+1])
+						break
+	
+	def sort_data(self,offset) :
+		self["sort"] = dict()
+		self["sort"]["trace"] = dict()
+		self["sort"]["trace"]["up"] = []
+		self["sort"]["trace"]["down"] = []
+		self["sort"]["retrace"] = dict()
+		self["sort"]["retrace"]["up"] = []
+		self["sort"]["retrace"]["down"] = []
+		for i in range(size(self["detection"][0])) :
+			if self["detection"][2][i] == "trace" :
+				if self["detection"][4][i] == "down" :
+					self["sort"]["trace"]["down"].append(self["detection"][0][i])
+				if self["detection"][4][i] == "up" :
+					self["sort"]["trace"]["up"].append(self["detection"][0][i])
+			if self["detection"][2][i] == "retrace" :
+				if self["detection"][4][i] == "down" :
+					self["sort"]["retrace"]["down"].append(self["detection"][0][i] - offset)
+				if self["detection"][4][i] == "up" :
+					self["sort"]["retrace"]["up"].append(self["detection"][0][i] - offset)
 		return True
 
-	def get_hist_vs_retrace(self,points,rge,shift_B,shift_trace) :
-		tempUp = deep_copy(self["UP"])
-		tempDown = deep_copy(self["DOWN"])
-		siup = size(tempUp[0])
-		sidown = size(tempDown[0])
-		for i in range(siup) :
-			if (tempUp[2][i] == "retrace") :
-				tempUp[0][i] = tempUp[0][i] - shift_B
-		for i in range(sidown) :
-			if (tempDown[2][i] == "retrace") :
-				tempDown[0][i] = tempDown[0][i] - shift_B
-		min_si = min(siup,sidown)
-		return histogram2d(tempDown[0][:min_si-shift_trace],tempUp[0][shift_trace:min_si],points,rge)
+	def get_double(self,offset = 0) :
+		self["double"]= dict()
+		self["double"]["trace"]=[[],[],[]]
+		self["double"]["retrace"] = [[],[],[]]
 
-	def get_hist_vs_trace(self,points,rge,shift_B,shift_trace=1):
-		tempUp = deep_copy(self["UP"])
-		siup = size(tempUp[0])
-		for i in range(siup) :
-			if (tempUp[2][i] == "retrace") :
-				tempUp[0][i] = tempUp[0][i] -shift_B
-		return histogram2d(tempUp[0][:siup-shift_trace],tempUp[0][shift_trace:siup],points,rge)
+		for i in range(size(self["detection"])) :
+			type_sweep = self["detection"][2][i]
+			nbr_sweep = self["detection"][3][i]
+			for j in range(size(self["detection"][0])-(i+1)) :
+				if type_sweep == self["detection"][2][j+i+1] and nbr_sweep == self["detection"][3][j+i+1] :
+					if type_sweep == "trace" :
+						self["double"]["trace"][0].append(self["detection"][0][i])
+						self["double"]["trace"][1].append(self["detection"][0][j+i+1])
+						self["double"]["trace"][2].append(nbr_sweep)
+					if type_sweep == "retrace" :
+						self["double"]["retrace"][0].append(self["detection"][0][i] - offset)
+						self["double"]["retrace"][1].append(self["detection"][0][j+i+1] - offset)
+						self["double"]["retrace"][2].append(nbr_sweep)
 
 	def get_animation(self,nbr_of_frame,points,rge,shift_B) :
 		self["animation"] = []
 		for i in range(nbr_of_frame) :
-			self["animation"].append(self.get_hist_vs_retrace(points,rge,shift_B,i))
-			self["animation"].append(self.get_hist_vs_trace(points,rge,shift_B,i+1))
+			self["animation"].append(self.get_hist(points,rge,shift_B,i))
+			self["animation"].append(self.get_hist(points,rge,shift_B,i+1))
 		return True
 
 	def save_all(self,tracefile,retracefile,whole_experiment) :

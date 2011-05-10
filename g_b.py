@@ -2,21 +2,20 @@ import enthought.traits.api as eta
 import enthought.traits.ui.api as etua
 import os as os
 
-class GB_gui(eta.HasTraits) :
+
+class GB_Win(eta.HasTraits) :
 	
 	nbr_sweep = eta.Range(0,800,1)
-	width = eta.Int
 	
-	def __init__(self, A,width=9) :
-		self.width = width
+	def __init__(self,A) :
 		self.a=A
 		self.nbr_sweep = 0
 
 	def _lunch_fired(self) :
-		self.a.plot_curve(self.nbr_sweep, self.width)
+		plot(A[self.nbr])
 
 	def _nbr_sweep_changed(self) :
-		self.a.plot_curve(self.nbr_sweep, self.width)
+		plot(A[self.nbr])
 
 
 class GB_Open(Measure) :
@@ -83,7 +82,15 @@ class GB_Open(Measure) :
 
 	def get_sweep(self,nbr) :
 		return [self["bias"],self["data"][nbr]]
-
+	
+	def get_stat_old(self,seuil,i_start,w=4) :
+		self["old_stat"] = [[],[]]
+		for i in range(self["sweep_number"]): 
+			temp = self.get_jump(i,i_start,seuil,w)
+			if(True):
+				self["old_stat"][0].append(temp[0]) 
+				self["old_stat"][1].append(temp[1])
+		return True
 	
 	def get_stat(self,seuil,i_start,w=9):
 		self["stat"] = [[],[]]
