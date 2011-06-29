@@ -367,6 +367,19 @@ def plot_profile(im):
 	plot( linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0))
 	return [linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0),Vg]
 
+def extract_pop(histo,nbr_pic,width) :
+	result = []
+	X = ginput(nbr_pic)
+	size_hist = size(histo[1])
+	Xmin = histo[1][0]
+	Xmax = histo[1][-1]
+	step = 1.0 * abs(Xmax-Xmin)/size_hist
+	for i in range(nbr_pic) :
+		center = floor(abs(X[i][0] - Xmin)/step)
+		result.append(sum(histo[0][center-width:center+width]))
+	return [result,1.0*array(result)/sum(result)]
+
+
 def plot_int(data):
 	"""
 	Given a array of data in the form [V, dI/dV], it comutes and plot the integral. This fonction can be used together with plot_profile
@@ -428,14 +441,23 @@ def check_span(X,Y,span):
 	size_X = size(X)
 	Xloc = list(X)
 	Yloc = list(Y)
-	for i in range(size_X-2) :
-		if(abs(Xloc[size_X - (i+1)] - Xloc[size_X - (i+2)]) < span ) :
-			if(Yloc[size_X - (i+1)] > Yloc[size_X - (i+2)]) :
-				Xloc.pop(size_X - (i+2))
-				Yloc.pop(size_X - (i+2))
-			else :	
-				Xloc.pop(size_X - (i+1))
-				Yloc.pop(size_X - (i+1))
+	to_delete = []
+	for i in range(size_X) :
+		for j in range(size_X) :
+			if(abs(Xloc[i] - Xloc[j]) < span  and i != j) :
+				if(Yloc[i] > Yloc[j]) :
+					if to_delete.__contains__(j) == False :
+						to_delete.append(j)
+				else :	
+					if to_delete.__contains__(i) == False :
+						to_delete.append(i)
+	to_delete = array(to_delete)
+	to_delete.sort()
+	si = size(to_delete)
+	for i in range(si) :
+		Xloc.pop(to_delete[si-i-1])
+		Yloc.pop(to_delete[si-i-1])
+
 	return [Xloc,Yloc] 
 
 def max_local(X,Y,separation) :
@@ -445,7 +467,7 @@ def max_local(X,Y,separation) :
 		if(i >0 and i < size_array-1 and (Y[i-1] < Y[i] and Y[i] > Y[i+1])) :
 			result[0].append(X[i])
 			result[1].append(Y[i])
-	result = check_span(result[0],result[1],separation) 
+	result = fct3.check_span(array(result[0]),array(result[1]),separation) 
 
 	return result
 
@@ -460,4 +482,5 @@ def get_jump(X,Y,seuil,span) :
 			Ys.pop(si_Ys - (i+1))
 			Xs.pop(si_Ys - (i+1))
 	return [Xs,Ys]
+
 

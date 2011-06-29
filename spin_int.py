@@ -27,7 +27,7 @@ ALL THE ENERGIES USED ARE IN KELVIN!!!!
 g=5/4.
 muBeV = 5.7883817555e-5 #eV
 kB = 8.617343e-5 #eV
-muB = 0.465 #cm-1
+muB = 1      #0.465 #cm-1
 
 
 

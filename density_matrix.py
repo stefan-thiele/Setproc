@@ -132,6 +132,41 @@ class Density_Open(ToSaveObject) :
 			
 
 		return True
+	def evol_state(self,shift) :
+		self["evol"]=[[],[],[],[]]
+		for i in range(size(self["detection"][0])) :
+			if self["detection"][2][i] == "retrace" :
+				self["evol"][0].append(self["detection"][0][i] - shift)
+			else :
+				self["evol"][0].append(self["detection"][0][i])
+			self["evol"][1].append(self["detection"][3][i])
+			self["evol"][2].append(self["detection"][2][i])
+			self["evol"][3].append(self["detection"][4][i])
+
+		return True
+
+	def plot_evol(self,span) :
+		self.fig = figure()
+		self.ax = self.fig.add_subplot(111)
+		color = "blue"
+		conf = 1
+		for i in range(size(self["detection"][0])-span) :
+			if self["evol"][2][i] == "trace" :
+				if self["evol"][3][i] == "down" :
+					self.ax.plot(self["evol"][1][i],self["evol"][0][i],'bo')
+				else :
+					self.ax.plot(self["evol"][1][i],self["evol"][0][i],'ro')
+
+			if self["evol"][2][i] == "retrace" :
+				if self["evol"][3][i] == "down" :
+					self.ax.plot(self["evol"][1][i],self["evol"][0][i],'ro')
+				else :
+					self.ax.plot(self["evol"][1][i],self["evol"][0][i],'bo')
+
+			self.ax.set_xlim(i,i-span)
+			#sleep(0.01)
+			#draw()
+		
 
 
 	def plot_Map_H(self,kind,trans,Hmin,stepH):

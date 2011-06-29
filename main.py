@@ -26,7 +26,7 @@ import dataprocess as dp
 
 # import ipy_profile_sh
 
-
+execfile(folder+"profile_functions.py")
 execfile(folder+"functions.py")
 execfile(folder+"openmeasures.py")
 execfile(folder+"map.py")

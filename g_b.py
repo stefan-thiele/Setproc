@@ -102,14 +102,29 @@ class GB_Open(Measure) :
 		return True
 	
 	def get_hist(self,nbr_pts,rge,stat_name,seuil="all") :
-		stat_temp = copy(self[stat_name]).tolist()
-		size_stat_temp = size(stat_temp[0])
+		stat_temp_min = copy(self[stat_name][0]).tolist()
+		stat_temp_max = copy(self[stat_name][1]).tolist()
+		size_stat_temp_min = size(stat_temp_min)/size(stat_temp_min[0])
+		size_stat_temp_max = size(stat_temp_max)/size(stat_temp_max[0])
+		final_min = []
+		final_max = []
 		if(seuil != "all"):
-			for i in range(size_stat_temp) :
-				if(seuil > stat_temp[1][size_stat_temp - (i+1)]) :
-					stat_temp[0].pop(size_stat_temp - (i+1))
-		temp = histogram(stat_temp[0], nbr_pts,rge)
-		self["hist"] = [temp[0],temp[1]]
+			for i in range(size_stat_temp_min) :
+				if(seuil < stat_temp_min[size_stat_temp_min - (i+1)][1]) :
+					stat_temp_min.pop(size_stat_temp_min - (i+1))
+			for i in range(size_stat_temp_max) :
+				if(seuil > stat_temp_max[size_stat_temp_max - (i+1)][1]) :
+					stat_temp_max.pop(size_stat_temp_max - (i+1))
+		
+		for i in range((size(stat_temp_min)/size(stat_temp_min[0]))):
+			final_min.append(stat_temp_min[i][0])
+		
+		for i in range((size(stat_temp_max)/size(stat_temp_max[0]))):
+			final_max.append(stat_temp_max[i][0])
+		
+		temp_min = histogram(final_min, nbr_pts,rge)
+		temp_max = histogram(final_max, nbr_pts,rge)
+		self["hist"] = [temp_min,temp_max]
 		return True
 
 	def sanity_check(self) :
@@ -355,9 +370,9 @@ class new_GB(Measure) :
 		self.pA = plot(array(HA[1][0:size(SA)])-offset,2 * (array(SA)/(1.* norm) - 0.5), linewidth = 3, color = colr )
 		self.pR = plot(array(HR[1][0:size(SA)]) + offset, 2 * ((array(SR) - max(SR)) /(1.* norm) +  0.5)   , linewidth = 3, color = colr )
 
-	def get_cycle_trace(self,colr,offset) :
-		HA = self._A["hist"]
-		HR = self._R["hist"]
+	def get_cycle_trace(self,colr,offset,nbr) :
+		HA = self._A["hist"][nbr[0]]
+		HR = self._R["hist"][nbr[1]]
 		SA= sum_over(HA[0])
 		SR= sum_over(HR[0])
 		norm = self._A["sweep_number"]
