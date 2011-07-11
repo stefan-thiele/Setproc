@@ -21,8 +21,8 @@ from pylab import *
 from matplotlib.colors import LinearSegmentedColormap
 from copy import deepcopy
 import sys
-sys.path.append(folder+"lib/")
-import dataprocess as dp
+#sys.path.append(folder+"lib/")
+#import dataprocess as dp
 
 # import ipy_profile_sh
 
@@ -35,4 +35,4 @@ execfile(folder+"g_b.py")
 execfile(folder+"HysteresisVg.py")
 execfile(folder+"movingaverage.py")
 execfile(folder+"dataprocess.py")
-#execfile(folder+"density_matrix.py")
+execfile(folder+"density_matrix.py")

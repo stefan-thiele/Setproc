@@ -344,16 +344,16 @@ class new_GB(Measure) :
 
 	def first_cycle_trace(self,nbr,rge,stat_name,colr,offset,seuil="all"):
 		
-		if(Cyc7_0._A.__contains__(stat_name) == False and stat_name == "stat") :
+		if(self._A.__contains__(stat_name) == False and stat_name == "stat") :
 			print "There is no statistic yet..."
 			if(seuil == "all"):
 				seuil = input("Seuil? : ")
 			i_start = input("Starting point? (200 recommended) : ")
 			w = input("Width of the filter? (usually 4) : ")
-			Cyc7_0._A.get_stat(seuil,i_start)
-			Cyc7_0._R.get_stat(seuil,i_start)
+			self._A.get_stat(seuil,i_start)
+			self._R.get_stat(seuil,i_start)
 		
-		if(Cyc7_0._A.__contains__(stat_name) == False):
+		if(self._A.__contains__(stat_name) == False):
 			print "There is no statitic corresponding to that name.. You have to generate it first using the _inter_stat method. "
 		else :
 			self._A.get_hist(nbr,rge,stat_name,seuil)
