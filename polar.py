@@ -35,7 +35,7 @@ class TracePolar(Measure) :
 			if (sit < sib ) :
 				for j in range(sib - sit) :
 					#recopie la derniere valeur pour completer
-					self["data"][i].append(self["data"][i][sit-j])
+					self["data"][i].append(self["data"][i][sit-j-1])
 			if (sit > sib ) :
 				#recopie la derniere valeur pour completer
 				self["data"][i] = self["data"][i][0:sib]
@@ -49,7 +49,7 @@ class TracePolar(Measure) :
 		r = array(self["bias"])
 		self.f= figure()
 		self.ax = subplot(111, projection = 'polar')
-		self.p= self.ax.pcolormesh(th,r, array(matrix(array(self["data"])-offset).transpose()))
+		self.p= self.ax.imshow(th,r, array(matrix(array(self["data"])-offset).transpose()))
 		self.p.set_cmap(cmap =french)
 		self.ax.set_rmax(abs(max(self["bias"])))
 		self.cb = self.f.colorbar(self.p)
@@ -73,6 +73,7 @@ class FullPolar(dict) :
 			for i in range(self.trace["sweep_number"]) :
 				YT = array(self.trace["data"][i])
 				YR = self.retrace["data"][i]
+				YR.reverse()
 				self["data"].append(YT -array(YR))
 				for j in range(sit) :
 					self["data"][i][j] = self["data"][i][j]*sign(self.trace["bias"][j])

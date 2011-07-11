@@ -248,7 +248,7 @@ class Density_Open(ToSaveObject) :
 	def get_animation(self,nbr_of_frame,points,rge,shift_B) :
 		self["animation"] = []
 		for i in range(nbr_of_frame) :
-			self["animation"].append(self.get_hist(points,rge,shift_B,i))
+			#self["animation"].append(self.get_hist(points,rge,shift_B,i))
 			self["animation"].append(self.get_hist(points,rge,shift_B,i+1))
 		return True
 
