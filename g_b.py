@@ -159,79 +159,6 @@ class GB_Open(Measure) :
 		return merge_GB([self,other])
 
 
-class Pic_Open(Measure) :
-	"""
-	This is the new class Json file that should generate in an esasier way, the correct plot with the correct axis.
-	"""
-	def __init__(self,filename,mode):
-		Measure.__init__(self,filename,mode)
-	
-	def _inter_stat(self,trace) :
-		temp = []
-		data = []
-		XA = trace["bias"] #attention le bias du pic a moins de point !!
-		XP = self["bias"]
-		SA = size(trace["bias"])
-		SP = size(self["bias"])
-		fig = figure()
-		fig.set_size_inches(16.7  ,  10.575)
- 		for i in range(3) : #self["sweep_number"]) :
-			fig.clf()
-			YA = trace["data"][i]
-			YP = self["data"][i]
-			#plot de la trace ( YA=f(XA) )
-			ax = fig.add_subplot(211)
-			plot(XA,YA)
-			ax.set_xlim(XA[0],XA[SA-1])
-			#plot du pic
-			ax = fig.add_subplot(212)
-			ax.set_xlim(XA[0],XA[SA-1])
-			plot(XP,YP)
-			temp = ginput()
-			if size(temp) > 0 :
-				tosave = temp[0][0] #seulement le champ	
-				######This should be improved in order to get the real max
-				#print tosave
-				#pos = XP.index(tosave)
-				#toput = max(YP[(pos-window/2),(pos+window/2)])
-				##################
-				data.append(tosave) 
-		close(fig)
-		return data
-
-	def plot_curve(self,nbr) :
-		self.fig = figure()
-		self.ax  = self.fig.add_subplot(111)
-		x = self["bias"]
-		y = self["data"][nbr]
-		plot(x,y)
-
-	def get_jump(self,nbr,i_start) :
-		bsweep = self["bias"][i_start:]
-		jump = self["data"][nbr][i_start:]
-		return bsweep[jump.index(max(jump))]
-
-	def get_stat(self,seuil,i_start):
-		self["init_stat"] = []
-		for i in range(self["sweep_number"]) :	
-			try :
-				if(max(self["data"][i])>seuil) :
-					self["init_stat"].append(self.get_jump(i,i_start))
-			except :
-				print "No data in the sweep"
-		return True
-
-	def get_hist(self,nbr_pts,rge,stat_name) :
-		temp = hist(self[stat_name], nbr_pts,rge)
-		self["hist"] = [temp[0],temp[1]]
-		return True
-
-	def new_stat(self,stat_name,trace) :
-		self[stat_name] = self._inter_stat(trace)
-		return True 
-
-
-
 class probar_pic(Measure) :
 	
 	def __init__(self,filename,mode):
@@ -334,12 +261,12 @@ class new_GB(Measure) :
 		self._R.sanity_check()
 
 	def get_stat(self,seuil,i_start) :
-		self._picA.get_stat(seuil,i_start)
-		self._picR.get_stat(seuil,i_start)
+		self._A.get_stat(seuil,i_start)
+		self._R.get_stat(seuil,i_start)
 
 	def get_hist(self,nbr,rge,stat_name) :
-		self._picA.get_hist(nbr,rge,stat_name)
-		self._picR.get_hist(nbr,rge,stat_name)
+		self._A.get_hist(nbr,rge,stat_name,seuil)
+		self._R.get_hist(nbr,rge,stat_name,seuil)
 
 
 	def first_cycle_trace(self,nbr,rge,stat_name,colr,offset,seuil="all"):
@@ -360,16 +287,6 @@ class new_GB(Measure) :
 			self._R.get_hist(nbr,rge,stat_name,seuil)
 			self.get_cycle_trace(colr,offset)
 
-
-	def get_cycle(self,colr,offset) :
-		HA = self._picA["hist"]
-		HR = self._picR["hist"]
-		SA= sum_over(HA[0])
-		SR= sum_over(HR[0])
-		norm = self._A["sweep_number"]
-		self.pA = plot(array(HA[1][0:size(SA)])-offset,2 * (array(SA)/(1.* norm) - 0.5), linewidth = 3, color = colr )
-		self.pR = plot(array(HR[1][0:size(SA)]) + offset, 2 * ((array(SR) - max(SR)) /(1.* norm) +  0.5)   , linewidth = 3, color = colr )
-
 	def get_cycle_trace(self,colr,offset,nbr) :
 		HA = self._A["hist"][nbr[0]]
 		HR = self._R["hist"][nbr[1]]
@@ -379,14 +296,6 @@ class new_GB(Measure) :
 		self.pA = plot(array(HA[1][0:size(SA)])-offset,2 * (array(SA)/(1.* norm) - 0.5), linewidth = 3, color = colr )
 		self.pR = plot(array(HR[1][0:size(SA)]) + offset, 2 * ((array(SR) - max(SR)) /(1.* norm) +  0.5)   , linewidth = 3, color = colr )
 
-	def newstat_A(self,statname) :
-		self._picA.new_stat(statname,self._A)
-		return True
-
-
-	def newstat_R(self,statname) :
-		self._picR.new_stat(statname,self._R)
-		return True
 
 	def save_all(self,A=None,R=None,picA=None,picR=None):
 	

@@ -1,17 +1,2 @@
-* simplify all the object by using function inside the methods.. Since many methods use the same functions at the end..
-
-* Finalize the test on the new library dataprocess (particularly on the moving average and drift issues)
-
-* Make a format for the measures object in the javascript files and have a name for each kind of measurements. Then modify openmeasures.py to take into account this modifications while always being able to open the old files.
-
-* To rename GB_open with a different name that would correspond to the nanoQT script name or the one contained in the javascript object measures.
-
-* Deprecate the Pic fonction so that we only generate trace and retrace without the corresponding pic files. A conversion function should be provided that would modified the *.bin files that have been generated with the previous constructors
-
-* Merge new_GB and density to have access to all the method at the same time.
-
-* Redefine the OpeanMeasure with the ToSaveOnject Class to have a more coherent code.
-
-* Integrate mayavi plot so that professional 3d histogram can be plotted (interest to assess) 
-
-* Create a function to redraw all the figures
+* In get_AR() function, in case of several measurements, the last one should be the one kept for the trace whereas it should be the first one in the case of the retrace.
+* Take care of the exceptions and error handling for the stat (old or not), hist (old or not) and plot_cycle function

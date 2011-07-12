@@ -13,6 +13,8 @@ import matplotlib.lines as mpllines
 import pickle
 import cPickle
 import enthought.mayavi.mlab as mayavi
+import os 
+
 from matplotlib.colors import LogNorm
 from scipy import constants as pc
 from scipy import*
@@ -20,13 +22,13 @@ from numpy import*
 from pylab import *
 from matplotlib.colors import LinearSegmentedColormap
 from copy import deepcopy
-import sys
+
+#import sys
 #sys.path.append(folder+"lib/")
 #import dataprocess as dp
 
 # import ipy_profile_sh
 
-execfile(folder+"profile_functions.py")
 execfile(folder+"functions.py")
 execfile(folder+"openmeasures.py")
 execfile(folder+"map.py")
