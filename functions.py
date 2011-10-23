@@ -5,183 +5,16 @@ This file contains all the functions needed for the different classes
 """
 
 
-"""
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Flag colormap
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-"""
-cdict3 = {'red':  ((0.0, 0.0, 0.0),
-                   (0.25,0.5, 0.5),
-                   (0.5, 1.0, 1.0),
-                   (0.75,1.0, 1.0),
-                   (1.0, 1.0, 1.0)),
-
-         'green': ((0.0, 0.0, 0.0),
-                   (0.25,0.5, 0.5),
-                   (0.5, 1.0, 1.0),
-                   (0.75,0.5, 0.5),
-                   (1.0, 0.0, 0.0)),
-
-         'blue':  ((0.0, 1.0, 1.0),
-                   (0.25,1.0, 1.0),
-                   (0.5, 1.0, 1.0),
-                   (0.75,0.5, 0.5),
-                   (1.0, 0.0, 0.0))
-        }
-
-
-
-cdict2 = {'red':  ((0.0, 0.0, 0.0),
-		   (0.125,0.25,0.25),
-                   (0.25,0.5, 0.5),
-		   (0.375,0.75,0.75),
-                   (0.5, 1.0, 1.0),
-		   (0.625,1.0,1.0),	
-                   (0.75,1.0, 1.0),
-		   (0.875,1.0,1.0),
-                   (1.0, 1.0, 1.0)),
-
-         'green': ((0.0, 0.0, 0.0),
-		   (0.125,0.25,0.25),
-                   (0.25,0.5, 0.5),
-		   (0.375,0.75,0.75),
-                   (0.5, 0.5, 0.5),
-		   (0.625,0.25,0.25),
-                   (0.75,0.125, 0.125),
-		   (0.875,0.06,0.06),
-                   (1.0, 0.0, 0.0)),
-
-         'blue':  ((0.0, 1.0, 1.0),
-		   (0.125,1.0,1.0),
-                   (0.25,1.0, 1.0),
-		   (0.375,1.0,1.0),
-                   (0.5, 0.5, 0.5),
-		   (0.625,0.25,0.25),
-                   (0.75,0.125, 0.125),
-		   (0.875,0.06,0.06),
-                   (1.0, 0.0, 0.0))
-        }
-
-
-french = LinearSegmentedColormap('french', cdict2)
-
-
-
-
-
-
-
-"""
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Opening of the files
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-"""
-
-
-
-class SciData :
-	"""
-	This class extracts the data from a text file generated using the old scilab procedure. NB : the scilab procedure has to be revised since it inserts a line of zero in the middle of the matrix
-	"""
-	def __init__(self, filename) :
-		temp = loadtxt(filename)
-		self.data = extractScilab(temp)
-
-
-
-
-
-"""
-*****************************************************************************************
-Functions that handle the formatting of the figure
-*****************************************************************************************
-"""
-
+####################################
 def get_json(filename) :
+	"""
+	Given a json filename, return the corresponding python object.
+	"""
 	result =  json.load(open(filename,'r'))
 	return  result
 
-def cb_format(cb) :
-	"""
-	This function formats the colorbar
-        """
-	cb.ax.set_position([0.,0.08,0.385,0.06])
-	cb.ax.set_aspect(0.25)
 
-	cb.ax.title.set_fontsize(16)
-	cb.ax.title.set_position([1.7,-0.3])
-	cb.ax.title.set_text(r"$log(dI$/$dV)$ $(\rm{S})$")
-
-	return cb
-
-def f_format(f):
-	"""
-	This function formats the figure
-	"""
-	f.subplots_adjust(left = 0.16, bottom = 0.22, right = 0.98, top = 0.96, wspace = 0.2, hspace = 0.2)
-	f.set_size_inches([4.5,4.5],forward = "true")
-	return f
-
-def ax_format(ax,string):
-	"""
-	This function formats the axis
-	"""
-	#The three next lines have to be improved to handle the zoom...
-	#ax.set_aspect("auto")
-	#ax.set_xticklabels(floor(ax.get_xticks()),fontsize = 11)
-	#ax.set_yticklabels(ax.get_yticks(),fontsize = 11)
-	ax.set_ylabel(r"$V_{\rm{sd}}$ $(\rm{mV})$",fontsize = 16, fontweight = "regular", position = (1,0.5), horizontalalignment = "center")
-	if(string == "Vg_Vds_Map"):
-		ax.set_xlabel(r"$V_{\rm{g}}$ $(\rm{V})$",fontsize = 16, verticalalignment = "top", horizontalalignment = "right", position = (0.9,1) )
-	if(string == "B") :
-		ax.set_xlabel(r"$B$ $(\rm{T})$",fontsize = 16, verticalalignment = "top", horizontalalignment = "right", position = (0.9,1) )
-
-	
-	"""
-	This part handle the position of the ticks
-	"""
-	xlines = ax.get_xticklines()
-	ylines = ax.get_yticklines()
-
-	for line in xlines :
-		line.set_marker(mpllines.TICKDOWN)
-
-	for line in ylines :
-		line.set_marker(mpllines.TICKLEFT)
-
-	xlabels = ax.get_xticklabels()
-	ylabels = ax.get_yticklabels()
-	
-	for label in xlabels :
-		label.set_y(-0.01)
-	for label in ylabels :
-		label.set_x(-0.01) 
-
-	ax.xaxis.set_ticks_position("bottom")
-        ax.yaxis.set_ticks_position("left")
-
-
-	return ax
-
-
-def plot_format(f,ax,cb,string) :
-	"""
-	This fonction handles the final plot given the figure, the axes, the colorbar and a string ("Vg_Vds_Map" or "B" )
-	"""
-	cb_format(cb)
-	f_format(f)
-	ax_format(ax,string)
-	return True
-		
-
-"""
-*********************************************************************************
-*		Data processing:
-*This part contains all the functions dedicated to the data processing
-"""
-
-
-
+####################################
 def get_coupling():
 	"""	
 	This function gives the coupling of the sample to the gate source and drain as weel as the alpha factor given by Cg/Ct . 
@@ -189,14 +22,14 @@ def get_coupling():
 	as Cs Cd and alpha.
 	"""
 	temp = ginput(4)
-	Cs = abs( (temp[0][0] - temp[1][0]) / (temp[0][1] - temp[1][1])) * 1e3
-	tp = abs( ( temp[2][1] - temp[3][1] )/(temp[2][0] - temp[3][0])) * 1e-3
+	Cs = np.abs( (temp[0][0] - temp[1][0]) / (temp[0][1] - temp[1][1])) * 1e3
+	tp = np.abs( ( temp[2][1] - temp[3][1] )/(temp[2][0] - temp[3][0])) * 1e-3
 	Cd = (1 - tp)/ tp
 	alp = 1 / (Cs + 1 +Cd)
 	return [Cs,Cd,alp] 
 
 
-
+####################################
 def get_slope():
 	"""
 	Given two points, give the slope a line
@@ -206,7 +39,7 @@ def get_slope():
 
 
 
-
+#####################################
 def getposcolumn(data,string):
 	"""
 	This function allows to obtain the column number in a json file sweep given the name of the input
@@ -217,8 +50,7 @@ def getposcolumn(data,string):
 			result = i+1
 	return result
 
-
-
+######################################
 def json_data(jsonobject,i,column) :
 	"""
 	Given a json object generated by NanoQt, it extracts the column of a the data nbr i
@@ -242,7 +74,7 @@ def json_data(jsonobject,i,column) :
 	return temp
 
 
-
+######################################
 def colarray(data, colnum, rem):
 	"""
 	This function give back the column of an array given the array and the column number to be extracted. 
@@ -254,6 +86,7 @@ def colarray(data, colnum, rem):
 	return temp
 
 
+######################################
 def colarray_pol(data,A,B,theta):
 	"""
 	This function is dedicated to the polarplot in oder to take into account the signe of the magnetic field in the trace - retrace pot
@@ -265,7 +98,7 @@ def colarray_pol(data,A,B,theta):
 
 
 
-
+#######################################
 def plotdata(data, x, y):
 	"""
 	This function plot a 2D curve given a json data and the column number of x and y axis.
@@ -274,6 +107,7 @@ def plotdata(data, x, y):
 	return True
 
 
+########################################
 def getinputs(data):
 	"""
 	This function give the inputs used for a measurement given the corresponding json file.
@@ -284,6 +118,7 @@ def getinputs(data):
 		result.append(str(data["inputs"][x]["name"]).replace("u", ""))
 	return result
 
+########################################
 def getoutputs(data):
 	"""
 	This function give the outputs used for a measurement given the corresponding json file.
@@ -295,6 +130,7 @@ def getoutputs(data):
 		result.append(str(data["outputs"][x]["name"]).replace("u", ""))
 	return result
 
+########################################
 def getcolumns(data, col_num, sweep_num):
 	"""
 	This function allows to access to one column of a json file sweep given the sweep and the column numbers.
@@ -316,13 +152,13 @@ return result[0]
 """
 
 
-
+#######################################
 def export_data(filename, data):
 	savetxt(filename,matrix(data).transpose(),delimiter = " , ")
 	return True
 
 
-
+#######################################
 def extractScilab(data):
 	"""
 	This function allows to extract the data from a CSV like file. This is the function that should be used for the old transfrom data.
@@ -335,6 +171,7 @@ def extractScilab(data):
 	return result
 
 
+#######################################
 def plot_profile_h(im):
 	"""
 	Given a point on the Coulomb Map, this function plot the corresponding profile and returns a array of two columns [V,dI/dV]
@@ -351,7 +188,7 @@ def plot_profile_h(im):
 
 
 
-
+#######################################
 def plot_profile(im):
 	"""
 	Given a point on the Coulomb Map, this function plot the corresponding profile and returns a array of two columns [V,dI/dV]
@@ -367,6 +204,8 @@ def plot_profile(im):
 	plot( linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0))
 	return [linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0),Vg]
 
+
+#######################################
 def extract_pop(histo,nbr_pic,width) :
 	result = []
 	X = ginput(nbr_pic)
@@ -380,6 +219,7 @@ def extract_pop(histo,nbr_pic,width) :
 	return [result,1.0*array(result)/sum(result)]
 
 
+#######################################
 def plot_int(data):
 	"""
 	Given a array of data in the form [V, dI/dV], it comutes and plot the integral. This fonction can be used together with plot_profile
@@ -403,6 +243,7 @@ def plot_int(data):
 	return result
 
 
+######################################
 def co_above(data,seuil):
 	data.sort(reverse = True)
 	for i in range(size(data)):
@@ -411,6 +252,8 @@ def co_above(data,seuil):
 			break
 	return result
 
+
+#######################################
 def sum_over(data) :
 	result = []
 	for i in range(len(data)) :
@@ -419,7 +262,7 @@ def sum_over(data) :
 	return result
 
 
-
+########################################
 def merge_GB(GB_array) :
 	GB_temp = deepcopy(GB_array[0])
 	GB_nbr = size(GB_array)
@@ -436,7 +279,7 @@ def merge_GB(GB_array) :
 	return GB_temp
 
 
-
+#########################################
 def check_span(X,Y,span):
 	size_X = size(X)
 	Xloc = list(X)
@@ -460,6 +303,8 @@ def check_span(X,Y,span):
 
 	return [Xloc,Yloc] 
 
+
+############################################
 def max_local(X,Y,separation) :
 	result = [[],[]]
 	size_array = size(Y)
@@ -472,6 +317,8 @@ def max_local(X,Y,separation) :
 	return result
 
 
+
+############################################
 def get_jump(X,Y,seuil,span) :
 	jumps = max_local(X,Y,span)
 	Xs = list(jumps[0])

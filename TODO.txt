@@ -1,2 +1,0 @@
-* In get_AR() function, in case of several measurements, the last one should be the one kept for the trace whereas it should be the first one in the case of the retrace.
-* Take care of the exceptions and error handling for the stat (old or not), hist (old or not) and plot_cycle function

@@ -1,8 +1,20 @@
+import numpy as np
+from copy import deepcopy
+import simplejson as json
+import cPickle   #used to save the data
+
+folder = "/home/romain/Documents/These/Programmation/setproc/"
+execfile(folder+"Stat_point.py") #Load the Stat_point object used in sweep_set_open and cycle_process
+execfile(folder+"movingaverage.py") #contain the filer detecting the jump
+execfile(folder+"functions.py")
+execfile(folder+"openmeasures.py")
+execfile(folder+"g_b.py")
+execfile(folder+"cycle_process.py")
+
 
 """
 @uthor : Romain Vincent
 This file is the one that gather all the files needed for the postprocessing of the data
-"""
 
 folder = "/home/romain/setproc/"
 
@@ -38,3 +50,5 @@ execfile(folder+"HysteresisVg.py")
 execfile(folder+"movingaverage.py")
 execfile(folder+"dataprocess.py")
 execfile(folder+"density_matrix.py")
+
+"""
