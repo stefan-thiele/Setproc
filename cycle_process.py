@@ -58,7 +58,7 @@ class cycle_process(ToSaveObject) :
 			del(self.filenames_retrace)
 
 
-	def get_stat(self,seuil,i_start,w,power=1,sw=1) :
+	def get_stat(self,i_start,w,power=1,sw=1) :
 		"""
 		get_stat allows to detect the jumps going through all the sweeps. It uses directly the function get_jump_2 of the sweep_set_open object. This data are stored independtly from the trace and retrace file. The syntax is the following get_stat(seuil,i_start,w) where seuil is the threshold of detection, i_start is the number of points to skip from zero, and w is the filter widht (see the filter doc for more information).
 		"""
