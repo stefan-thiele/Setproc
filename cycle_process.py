@@ -240,7 +240,7 @@ class cycle_process(ToSaveObject) :
 		self.post_loading()
 
 
-	def load_bin(self,mode="npz") :
+	def load_sweeps(self,mode="npz") :
 		"""
 		to be documented latter
 		"""
