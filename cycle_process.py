@@ -200,6 +200,30 @@ class cycle_process(ToSaveObject) :
 		return True
 
 
+
+	def get_hysteresis(self) :
+		"""
+		This function take for each trace and retrace the value of the magnetic field corresponding at the strongest transistion. This statistic is used afterwards to plot the hysteresis cycle.
+		"""
+		self["hysteresis"] =[[],[]]
+		tot_size = size(self["detection"])
+		itera = int(tot_size/4)
+		for i in range(itera):
+			trace1 = self["detection"][4*i]
+			trace2 = self["detection"][4*i+1]
+			retrace1 = self["detection"][4*i+2]
+			retrace2 = self["detection"][4*i+3]
+			if(trace1.value > trace2.value) :
+				self["hysteresis"][0].append(trace1.field)
+			else :
+				self["hysteresis"][0].append(trace2.field)
+				
+			if(retrace1.value > retrace2.value) :
+				self["hysteresis"][1].append(retrace1.field)
+			else :
+				self["hysteresis"][1].append(retrace2.field)
+	
+			
 ########################################################
 ###This part is dedicated to saving and loading the data
 ###
