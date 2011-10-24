@@ -1,0 +1,27 @@
+*******
+***cycle_process.py
+**
+-> give the possibility for each one of the statistic representation to select a substet of detection.
+-> correct the get_value_stat
+-> while loading : if there is any JSONDecodeErro, discard both trace and retrace an continue loading files
+
+
+******
+***plot_i.py
+**
+-> Add more control on tick
+-> Check for possible extension using enthought
+
+*****
+***g_b.py
+**
+->
+
+
+*****
+***moving_average.py
+**
+-> Implement the function in Cython
+
+
+
