@@ -139,7 +139,7 @@ class cycle_process(ToSaveObject) :
 					if second.trace == True :
 						break
 					
-					#I check if don't use twice	
+					#I check if don't use twice  <--- TO BE ADDED!!!
 					#if second.trace == False and second.sweep_nbr == first.sweep_nbr :
 					self["AvsR"][0].append(first.field)
 					self["AvsR"][1].append(second.field)
@@ -172,6 +172,37 @@ class cycle_process(ToSaveObject) :
 					self["sort"]["retrace"]["up"].append(topush.field - offset)
 		return True
 	
+	def get_double(self,seuil,offset):
+		self["double"] = dict()
+		self["double"]["trace"] = [[],[]]
+		self["double"]["retrace"] = [[],[]]
+		tot_size = size(self["detection"])
+		itera = int(tot_size/4)
+		for i in range(itera) :
+			trace1 = self["detection"][4*i]
+			trace2 = self["detection"][4*i+1]
+			retrace1 = self["detection"][4*i+2]
+			retrace2 = self["detection"][4*i+3]
+			if(abs(trace1.value) > seuil and abs(trace2.value) > seuil) :
+				self["double"]["trace"][0].append(trace1.field)
+				self["double"]["trace"][1].append(trace2.field)
+			if(abs(retrace1.value) > seuil and abs(retrace2.value) > seuil ):
+				self["double"]["retrace"][0].append(retrace1.field)
+				self["double"]["retrace"][1].append(retrace2.field)
+			
+
+	def get_value_stat(self) :
+		self["value_stat"] =[]
+		for i in range(size(self["detection"])) :
+			self["value_stat"].append(self["detection"][i].value)
+		figure()
+		hist(log10(abs(array(self["value_stat"]))),200)
+		return True
+
+
+########################################################
+###This part is dedicated to saving and loading the data
+###
 
 	def save_all(self,tracefile,retracefile,whole_experiment) :
 		"""

@@ -79,7 +79,7 @@ class sweep_set_open(dict) :
 		return merge_GB([self,other])
 
 	##To plot and acess
-	def plot_curve(self,nbr,i_start,w=4) :
+	def plot_curve(self,nbr,i_start,w=4,pw = 1, sw = 1) :
 		try :
 			self.fig.clear()
 			self.ax1.clear()
@@ -93,7 +93,7 @@ class sweep_set_open(dict) :
 		self.ax1.plot(X,Y)
 		self.ax1.set_xlim(X[0],X[si-1])
 		self.ax2 = self.fig.add_subplot(212)
-		self.ax2.plot(X[(w-1):si-(w-1)],filter(Y,w))
+		self.ax2.plot(X[(w-1)+sw/2:si-(w-1)-sw/2 +1 -sw%2],filter(Y,w,pw,sw))
 		self.ax2.set_xlim(X[0],X[si-1])
 		for i in get_fignums() :
 			figure(i)

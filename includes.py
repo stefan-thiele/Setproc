@@ -3,7 +3,7 @@ from copy import deepcopy
 import simplejson as json
 import cPickle   #used to save the data
 
-folder = "/home/romain/Documents/These/Programmation/setproc/"
+folder = "/home/romain/setproc/"
 execfile(folder+"Stat_point.py") #Load the Stat_point object used in sweep_set_open and cycle_process
 execfile(folder+"movingaverage.py") #contain the filer detecting the jump
 execfile(folder+"functions.py")
