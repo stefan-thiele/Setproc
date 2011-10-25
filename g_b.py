@@ -21,14 +21,12 @@ class sweep_set_open(dict) :
 			del(temp)
 
 
-	def get_jump(self,nbr,i_start,w=4,power=1,sw=1) :
+	def get_jump(self,nbr,i_start,w=4,power=1,sw=1,si = "None") :
 		up = Stat_point()
                 down = Stat_point()
-
-		si = size(self["bias"])
-		bsweep = self["bias"][i_start+(w-1)+sw/2:si-(w-1)-sw/2+1-sw%2]
-		size(bsweep)
-			
+		if si == "None" :
+			si = size(self["bias"])
+		bsweep = self["bias"][i_start+(w-1)+sw/2:si-(w-1)-sw/2+1-sw%2] 
 		temp_array = np.array(self["data"][nbr][i_start:], dtype = np.float)
 		jump = filter(temp_array,w,power,sw)
 		max_jump = jump.max()

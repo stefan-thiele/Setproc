@@ -4,6 +4,7 @@
 -> give the possibility for each one of the statistic representation to select a substet of detection.
 -> correct the get_value_stat
 -> while loading : if there is any JSONDecodeErro, discard both trace and retrace an continue loading files
+-> Suppress the double sanity_check when only one file is loaded
 
 
 ******
@@ -15,13 +16,11 @@
 *****
 ***g_b.py
 **
-->
+
 
 
 *****
 ***moving_average.py
 **
--> Implement the function in Cython
-
-
+-> still seeking for a faster implementation. The botlle neck is the convolve itself according to the profiling.
 

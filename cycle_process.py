@@ -64,10 +64,11 @@ class cycle_process(ToSaveObject) :
 		"""
 		self["detection"] = []
 		sweep_number = self.trace["sweep_number"]
+		si = size(self.trace["bias"])
 		for i in range(sweep_number) :
 			
 			#TRACE STAT
-			Down, Up = self.trace.get_jump(i,i_start,w,power,sw)
+			Down, Up = self.trace.get_jump(i,i_start,w,power,sw,si)
 			Down.trace = True
 			Up.trace = True
 			
@@ -80,7 +81,7 @@ class cycle_process(ToSaveObject) :
 				self["detection"].append(Down)
 
 			#RETRACE STAT
-			Down, Up = self.retrace.get_jump(i,i_start,w,power,sw)
+			Down, Up = self.retrace.get_jump(i,i_start,w,power,sw,si)
 			Down.trace = False
 			Up.trace = False
 			#check what was detected first
