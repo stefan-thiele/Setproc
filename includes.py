@@ -1,11 +1,16 @@
+folder = "/home/romain/setproc/"
+sys.path.append(folder+"lib/")
+
 import numpy as np
 from copy import deepcopy
 import simplejson as json
+import moving_average as mva
 import cPickle   #used to save the data
 
-folder = "/home/romain/setproc/"
+
+
 execfile(folder+"Stat_point.py") #Load the Stat_point object used in sweep_set_open and cycle_process
-execfile(folder+"movingaverage.py") #contain the filer detecting the jump
+execfile(folder+"filter.py") #contain the filer detecting the jump
 execfile(folder+"functions.py")
 execfile(folder+"openmeasures.py")
 execfile(folder+"g_b.py")
