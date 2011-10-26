@@ -63,7 +63,7 @@ class cycle_process(ToSaveObject) :
 		get_stat allows to detect the jumps going through all the sweeps. It uses directly the function get_jump_2 of the sweep_set_open object. This data are stored independtly from the trace and retrace file. The syntax is the following get_stat(seuil,i_start,w) where seuil is the threshold of detection, i_start is the number of points to skip from zero, and w is the filter widht (see the filter doc for more information).
 		"""
 		self["detection"] = []
-		sweep_number = self.trace["sweep_number"]
+		sweep_number = max(self.trace["sweep_number"],self.retrace["sweep_number"])
 		si = size(self.trace["bias"])
 		for i in range(sweep_number) :
 			
@@ -98,12 +98,12 @@ class cycle_process(ToSaveObject) :
 		
 
 
-	def get_hist(self,points,rge,shift_B,seuil,shift_trace=1):
+	def get_hist(self,points,rge,shift_B,seuil1,seuil2,shift_trace=1):
 		temp = []
 		siup = size(self["detection"])
 		for i in range(siup) :
 			topush = self["detection"][i]
-			if(abs(topush.value) > seuil) : 
+			if(abs(topush.value) > seuil1 and abs(topush.value) < seuil2) : 
 				if (topush.trace == False) :
 					temp.append(topush.field -shift_B)
 				else :
@@ -114,7 +114,7 @@ class cycle_process(ToSaveObject) :
 
 
 
-	def get_A_R(self,seuil) :
+	def get_A_R(self,seuil1,seuil2) :
 		"""
 		This function parse the data and store all the sweep for which there was a jump both for the trace and retrace. They are store in ["AvsR"], the first element ["AvsR"][0] being the trace and the second the retrace.
 		"""
@@ -123,7 +123,7 @@ class cycle_process(ToSaveObject) :
 		for i in range(size_detect-2) :
 			first = self["detection"][i]
 			#I want to start with a trace above the threshold
-			if first.trace == False or abs(first.value) < seuil :
+			if first.trace == False or ( abs(first.value) < seuil1 and abs(first.value) > seuil2) :
 				continue
 			
 			if (size_detect -i) < 4 :
@@ -135,7 +135,7 @@ class cycle_process(ToSaveObject) :
 			for j in range(i+1,i+stop) :
 				second = self["detection"][j]
 				#I first check if they belong to the same sweep and if the threshold is reached
-				if(second.sweep_nbr == first.sweep_nbr and abs(second.value) > seuil) :	
+				if(second.sweep_nbr == first.sweep_nbr and abs(second.value) > seuil1 and abs(second.value) < seuil2 ) :	
 					#I check if first is really the last jump of the trace
 					if second.trace == True :
 						break
@@ -148,7 +148,7 @@ class cycle_process(ToSaveObject) :
 				else :
 					continue	
 		
-	def sort_data(self,seuil,offset) :
+	def sort_data(self,seuil1,seuil2,offset) :
 		"""
 		This function sort the jumps first according to trace and retrace and then according to the kind of transition, either up or done. For more information on the label up and down, please refer to the documentation of get_jump2.
 		"""
@@ -161,19 +161,19 @@ class cycle_process(ToSaveObject) :
 		self["sort"]["retrace"]["down"] = []
 		for i in range(size(self["detection"])) :
                         topush = self["detection"][i]
-			if topush.trace == True and abs(topush.value) > seuil :
+			if topush.trace == True and abs(topush.value) > seuil1 and abs(topush.value) < seuil2 :
 				if topush.up == False :
 					self["sort"]["trace"]["down"].append(topush.field)
 				else :
 					self["sort"]["trace"]["up"].append(topush.field)
-			if topush.trace == False and abs(topush.value) > seuil :
+			if topush.trace == False and abs(topush.value) > seuil1 and abs(topush.value) < seuil2 :
 				if topush.up == False :
 					self["sort"]["retrace"]["down"].append(topush.field - offset)
 				else :
 					self["sort"]["retrace"]["up"].append(topush.field - offset)
 		return True
 	
-	def get_double(self,seuil,offset):
+	def get_double(self,seuil1,seuil2,offset):
 		self["double"] = dict()
 		self["double"]["trace"] = [[],[]]
 		self["double"]["retrace"] = [[],[]]
@@ -184,12 +184,14 @@ class cycle_process(ToSaveObject) :
 			trace2 = self["detection"][4*i+1]
 			retrace1 = self["detection"][4*i+2]
 			retrace2 = self["detection"][4*i+3]
-			if(abs(trace1.value) > seuil and abs(trace2.value) > seuil) :
-				self["double"]["trace"][0].append(trace1.field)
-				self["double"]["trace"][1].append(trace2.field)
-			if(abs(retrace1.value) > seuil and abs(retrace2.value) > seuil ):
-				self["double"]["retrace"][0].append(retrace1.field)
-				self["double"]["retrace"][1].append(retrace2.field)
+			if(abs(trace1.value) > seuil1 and abs(trace2.value) > seuil1) :
+				if(abs(trace1.value) < seuil2 and abs(trace2.value) < seuil2) :
+					self["double"]["trace"][0].append(trace1.field)
+					self["double"]["trace"][1].append(trace2.field)
+			if(abs(retrace1.value) > seuil1 and abs(retrace2.value) > seuil1 ):
+				if(abs(retrace1.value) < seuil2 and abs(retrace2.value) < seuil2 ):
+					self["double"]["retrace"][0].append(retrace1.field)
+					self["double"]["retrace"][1].append(retrace2.field)
 			
 
 	def get_value_stat(self) :
