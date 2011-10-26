@@ -15,7 +15,6 @@ def filter(sweep,width,power,width2):
 	The width in argument is the one of the gate function
 	"""
 	moving_average = mva.moving_average_c
-	sweep = np.array(sweep)
         size_sweep = np.size(sweep);
         diff = np.zeros(size_sweep -1)
 	step1 = moving_average(sweep,width)

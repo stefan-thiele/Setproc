@@ -91,7 +91,7 @@ class sweep_set_open(dict) :
 		self.ax1.plot(X,Y)
 		self.ax1.set_xlim(X[0],X[si-1])
 		self.ax2 = self.fig.add_subplot(212)
-		self.ax2.plot(X[(w-1)+sw/2:si-(w-1)-sw/2 +1 -sw%2],filter(Y,w,pw,sw))
+		self.ax2.plot(X[(w-1)+sw/2:si-(w-1)-sw/2 +1 -sw%2],filter(np.array(Y),w,pw,sw))
 		self.ax2.set_xlim(X[0],X[si-1])
 		for i in get_fignums() :
 			figure(i)
