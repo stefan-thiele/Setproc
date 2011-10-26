@@ -120,33 +120,64 @@ class cycle_process(ToSaveObject) :
 		"""
 		self["AvsR"] = [[],[]]
 		size_detect = size(self["detection"])
-		for i in range(size_detect-2) :
-			first = self["detection"][i]
-			#I want to start with a trace above the threshold
-			if first.trace == False or ( abs(first.value) < seuil1 and abs(first.value) > seuil2) :
-				continue
+		itera = size_detect/4
+		for i in range(itera) :
+			traceok = False
+			retraceok = False
+			trace1 = self["detection"][4*i]
+			trace2 = self["detection"][4*i+1]
+			retrace1 = self["detection"][4*i+2]
+			retrace2 = self["detection"][4*i+3]
+			#check first which trace has to be taken
+			if(abs(trace1.value) > seuil1 and abs(trace2.value) > seuil1) :
+				if(abs(trace1.value) < seuil2 and abs(trace2.value) < seuil2) :
+					if abs(trace1.value) > abs(trace2.value) :
+						trace_push = trace1.field
+						traceok = True
+					else :
+						trace_push = trace2.field
+						traceok = True
+				elif abs(trace1.value) < seuil2 :
+					trace_push = trace1.field
+					traceok = True
+				elif abs(trace2.value) < seuil2 :
+					trace_push = trace2.field
+					traceok = True
+			elif abs(trace1.value) > seuil1 and abs(trace1.value) < seuil2 :
+				trace_push = trace1.field
+				traceok = True
+			elif abs(trace2.value) > seuil1 and abs(trace2.value) < seuil2 :
+				trace_push = trace2.field
+				traceok = True
 			
-			if (size_detect -i) < 4 :
-				stop = size_detect - i
-			else :
-				stop = 4
 
-			#Now I check the retrace that are at most i+3 farer (cf get_stat)
-			for j in range(i+1,i+stop) :
-				second = self["detection"][j]
-				#I first check if they belong to the same sweep and if the threshold is reached
-				if(second.sweep_nbr == first.sweep_nbr and abs(second.value) > seuil1 and abs(second.value) < seuil2 ) :	
-					#I check if first is really the last jump of the trace
-					if second.trace == True :
-						break
-					
-					#I check if don't use twice  <--- TO BE ADDED!!!
-					#if second.trace == False and second.sweep_nbr == first.sweep_nbr :
-					self["AvsR"][0].append(first.field)
-					self["AvsR"][1].append(second.field)
-				#if they do not belong to the same sweep_nbr -> break
-				else :
-					continue	
+			if(traceok) :
+				if(abs(retrace1.value) > seuil1 and abs(retrace2.value) > seuil1) :
+					if(abs(retrace1.value) < seuil2 and abs(retrace2.value) < seuil2) :
+						if abs(retrace1.value) > abs(retrace2.value) :
+							retrace_push = retrace1.field
+							retraceok = True
+						else :
+							retrace_push = retrace2.field
+							retraceok = True
+					elif abs(retrace1.value) < seuil2 :
+						retrace_push = retrace1.field
+						retraceok = True
+					elif abs(retrace2.value) < seuil2 :
+						retrace_push = retrace2.field
+						retraceok = True
+				elif abs(retrace1.value) > seuil1 and abs(retrace1.value) < seuil2 :
+					retrace_push = retrace1.field
+					retraceok = True
+				elif abs(retrace2.value) > seuil1 and abs(retrace2.value) < seuil2 :
+					retrace_push = retrace2.field
+					retraceok = True
+
+
+			if(traceok and retraceok):
+				self["AvsR"][0].append(trace_push)
+				self["AvsR"][1].append(retrace_push)
+
 		
 	def sort_data(self,seuil1,seuil2,offset) :
 		"""
