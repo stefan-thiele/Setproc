@@ -22,9 +22,9 @@ def filter(sweep,width,power,width2):
         step1 = np.square(step1)
         step2 = moving_average(step1,width)
         step3 = np.square(step3)
-        D = np.diff(sweep)
-	result = (D[width-1:size_sweep-width+1] * (step2 - step3))
-	#result = result ** power
-	return result #moving_average(result,width2)
+        D = np.diff(moving_average(sweep,2*width-2))
+	result = D * (step2 - step3)
+	result = result ** power
+	return moving_average(result,width2)
 
 

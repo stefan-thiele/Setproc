@@ -25,15 +25,14 @@ def filter(sweep,width,power,width2):
 	The width in argument is the one of the gate function
 	"""
         size_sweep = np.size(sweep);
-        diff = np.zeros(size_sweep -1)
-	step1 = moving_average(sweep,width)
-        step3 = moving_average(step1,width)
-        step1 = np.square(step1)
-        step2 = moving_average(step1,width)
-        step3 = np.square(step3)
-        D = np.diff(sweep)
-	result = (D[width-1:size_sweep-width+1] * (step2 - step3))
-	result = result ** power
-	return moving_average(result,width2)
+	step1 = moving_average(sweep,width)/width
+        step3 = moving_average(step1,width)/width
+        step1_carre = np.square(step1)
+        step2 = moving_average(step1_carre,width)/width
+        step3_carre = np.square(step3)
+        #D = np.diff(sweep)
+	result = step2 - step3_carre    #(D[width-1:size_sweep-width+1] * (step2 - step3))
+	#result = result ** power
+	return result  # moving_average(result,width2)
 
 

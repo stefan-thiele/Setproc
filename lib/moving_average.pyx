@@ -21,10 +21,10 @@ def moving_average_c(np.ndarray[DTYPE_t, ndim =1] f, int w) :
 			value = 0
 			for j in range(s_from,s_to):
 				value += f[j]
-			result[i] = value
+			result[i] = value / width
 		else :
 			value = value - f[i-1] +f[s_to-1]
-			result[i] = value
+			result[i] = value / width
 
 	return result
 		
