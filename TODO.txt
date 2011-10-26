@@ -16,11 +16,11 @@
 *****
 ***g_b.py
 **
-
+-> Implement in Cython a function which return at once min,max,argmin,argmax of an array
 
 
 *****
-***moving_average.py
+***filter.py
 **
--> still seeking for a faster implementation. The botlle neck is the convolve itself according to the profiling.
-
+-> Clean somehow the parameters with two different moving average within the filter allowing a faster smoothing of the signal.
+-> Try to implement it in Cython as well
