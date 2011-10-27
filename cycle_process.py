@@ -58,7 +58,7 @@ class cycle_process(ToSaveObject) :
 			del(self.filenames_retrace)
 
 
-	def get_stat(self,i_start,w,power=1,sw=1) :
+	def get_stat(self,i_start,w,power=1,sw=1,mode = "classic",seuil1 = 0, seuil2 = 0, span = 50) :
 		"""
 		get_stat allows to detect the jumps going through all the sweeps. It uses directly the function get_jump_2 of the sweep_set_open object. This data are stored independtly from the trace and retrace file. The syntax is the following get_stat(seuil,i_start,w) where seuil is the threshold of detection, i_start is the number of points to skip from zero, and w is the filter widht (see the filter doc for more information).
 		"""
@@ -66,9 +66,10 @@ class cycle_process(ToSaveObject) :
 		sweep_number = max(self.trace["sweep_number"],self.retrace["sweep_number"])
 		si = size(self.trace["bias"])
 		for i in range(sweep_number) :
-			
+			if(i%1000 ==0 and i > 0):
+				print(str(int(100 * i/sweep_number)) + "%")
 			#TRACE STAT
-			Down, Up = self.trace.get_jump(i,i_start,w,power,sw,si)
+			Down, Up = self.trace.get_jump(i,i_start,w,power,sw,si,mode,seuil1,seuil2,span)
 			Down.trace = True
 			Up.trace = True
 			
@@ -81,7 +82,7 @@ class cycle_process(ToSaveObject) :
 				self["detection"].append(Down)
 
 			#RETRACE STAT
-			Down, Up = self.retrace.get_jump(i,i_start,w,power,sw,si)
+			Down, Up = self.retrace.get_jump(i,i_start,w,power,sw,si,mode,seuil1,seuil2,span)
 			Down.trace = False
 			Up.trace = False
 			#check what was detected first
@@ -241,7 +242,7 @@ class cycle_process(ToSaveObject) :
 		hist(log10(array(self["value_stat"][0])),200)
 		
 		figure()
-		title("Rerace")
+		title("Retrace")
 		hist(log10(array(self["value_stat"][1])),200)
 		
 		return True

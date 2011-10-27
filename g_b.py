@@ -21,7 +21,7 @@ class sweep_set_open(dict) :
 			del(temp)
 
 
-	def get_jump(self,nbr,i_start,w=4,power=1,sw=1,si = "None") :
+	def get_jump(self,nbr,i_start,w=4,power=1,sw=1,si = "None",mode ="classic",seuil1 = 0,seuil2 =0,span = 50) :
 		up = Stat_point()
                 down = Stat_point()
 		if si == "None" :
@@ -29,18 +29,36 @@ class sweep_set_open(dict) :
 		bsweep = self["bias"][i_start+(w-1)+sw/2:si-(w-1)-sw/2+1-sw%2] 
 		temp_array = np.array(self["data"][nbr][i_start:], dtype = np.float)
 		jump = filter(temp_array,w,power,sw)
-		max_jump = jump.max()
-		min_jump = jump.min()
-                #construct up
-                up.field = bsweep[jump.argmax()]
-                up.value = max_jump
-                up.up = True
-		up.sweep_nbr = nbr
-                #construc down
-                down.field = bsweep[jump.argmin()]
-                down.value = min_jump
-                down.up = False
-                down.sweep_nbr = nbr
+		if mode == "classic" :
+			if( nbr == 0) :
+				print("In classic mode")
+			max_jump = jump.max()
+			min_jump = jump.min()
+	                #construct up
+        	        up.field = bsweep[jump.argmax()]
+                	up.value = max_jump
+                	up.up = True
+			up.sweep_nbr = nbr
+                	#construc down
+                	down.field = bsweep[jump.argmin()]
+                	down.value = min_jump
+                	down.up = False
+                	down.sweep_nbr = nbr
+		else :
+			down.value, min_arg ,up.value, max_arg = exst.extract_stat(jump,seuil1,seuil2,span)
+                	up.up = True
+			up.sweep_nbr = nbr
+			if max_arg < 0 :
+				up.field = 0
+			else :
+				up.field = bsweep[max_arg]
+
+                	down.up = False
+			up.sweep_nbr = nbr
+			if min_arg < 0 :
+				down.field = 0
+			else :
+				down.field = bsweep[min_arg]
 
 		return down, up 
 
