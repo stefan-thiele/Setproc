@@ -246,7 +246,27 @@ class cycle_process(ToSaveObject) :
 		
 		return True
 
-
+	def get_span_sweep_nbr(self,seuil1,seuil2):
+		self["span_swep_nbr"] = [[],[]]
+		tot_size = size(self["detection"])
+		itera = int(tot_size/4)
+		for i in range(itera) :
+			trace1 = self["detection"][4*i]
+			trace2 = self["detection"][4*i+1]
+			retrace1 = self["detection"][4*i+2]
+			retrace2 = self["detection"][4*i+3]
+			addtrace = True
+			addretrace = True
+			if(abs(trace1.value) > seuil1 and abs(trace1.value) < seuil2) :
+				self["span_swep_nbr"][0].append(trace1.sweep_nbr)
+				addtrace = False				
+			if(abs(trace2.value) > seuil1 and abs(trace2.value) < seuil2 and addtrace) :
+				self["span_swep_nbr"][0].append(trace2.sweep_nbr)
+			if(abs(retrace1.value) > seuil1 and abs(retrace1.value) < seuil2 ):
+				self["span_swep_nbr"][1].append(retrace1.sweep_nbr)
+				addretrace = False				
+			if(abs(retrace2.value) > seuil1 and abs(retrace2.value) < seuil2 and addretrace ):
+				self["span_swep_nbr"][1].append(retrace2.sweep_nbr)
 
 	def get_hysteresis(self) :
 		"""
