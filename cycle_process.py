@@ -226,11 +226,24 @@ class cycle_process(ToSaveObject) :
 			
 
 	def get_value_stat(self) :
-		self["value_stat"] =[]
+		self["value_stat"] =[[],[]]
 		for i in range(size(self["detection"])) :
-			self["value_stat"].append(self["detection"][i].value)
+			topush = abs(self["detection"][i].value)
+			towhere = self["detection"][i].trace
+			if(towhere) :
+				if topush > 0 :
+					self["value_stat"][0].append(topush)
+			else :
+				if topush > 0 :
+					self["value_stat"][1].append(topush)
 		figure()
-		hist(log10(abs(array(self["value_stat"]))),200)
+		title("Trace")
+		hist(log10(array(self["value_stat"][0])),200)
+		
+		figure()
+		title("Rerace")
+		hist(log10(array(self["value_stat"][1])),200)
+		
 		return True
 
 
