@@ -7,6 +7,7 @@ import simplejson as json
 import moving_average as mva
 import extract_stat as exst
 import cPickle   #used to save the data
+import time
 
 
 

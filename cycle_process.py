@@ -290,7 +290,57 @@ class cycle_process(ToSaveObject) :
 				self["hysteresis"][1].append(retrace1.field)
 			else :
 				self["hysteresis"][1].append(retrace2.field)
-	
+
+	def get_time_stat(self,mode = "retrace-trace") :
+
+		sweep_nbr = size(self["dates"][0])
+
+		if mode == "trace-retrace" :
+			result = []
+			for i in range(sweep_nbr):
+				DT = self["dates"][0][i]
+				DR = self["dates"][1][i]
+				Tt = time.strptime(DT,"%Y-%m-%dT%H:%M:%S") 
+				Tr = time.strptime(DR,"%Y-%m-%dT%H:%M:%S")
+				tt = time.mktime(Tt)
+				tr = time.mktime(Tr)
+				result.append(tr-tt)
+				
+		elif mode == "retrace-trace" :
+			result = []
+			for i in range(sweep_nbr-1):
+				DT = self["dates"][0][i+1]
+				DR = self["dates"][1][i]
+				Tt = time.strptime(DT,"%Y-%m-%dT%H:%M:%S") 
+				Tr = time.strptime(DR,"%Y-%m-%dT%H:%M:%S")
+				tt = time.mktime(Tt)
+				tr = time.mktime(Tr)
+				result.append(tr-tt)
+
+		elif mode == "trace-trace" :
+			result = []
+			for i in range(sweep_nbr-1):
+				DT = self["dates"][0][i+1]
+				DR = self["dates"][0][i]
+				Tt = time.strptime(DT,"%Y-%m-%dT%H:%M:%S") 
+				Tr = time.strptime(DR,"%Y-%m-%dT%H:%M:%S")
+				tt = time.mktime(Tt)
+				tr = time.mktime(Tr)
+				result.append(tr-tt)
+
+		elif mode == "retrace-retrace" :
+			result = []
+			for i in range(sweep_nbr-1):
+				DT = self["dates"][1][i+1]
+				DR = self["dates"][1][i]
+				Tt = time.strptime(DT,"%Y-%m-%dT%H:%M:%S") 
+				Tr = time.strptime(DR,"%Y-%m-%dT%H:%M:%S")
+				tt = time.mktime(Tt)
+				tr = time.mktime(Tr)
+				result.append(tr-tt)
+
+
+		return hist(result,25)
 			
 ########################################################
 ###This part is dedicated to saving and loading the data
@@ -324,8 +374,8 @@ class cycle_process(ToSaveObject) :
 		self["dates"] = [[],[]]
 		sweep_number = max(self.trace["sweep_number"],self.retrace["sweep_number"])
 		for i in range(sweep_number) :
-			self["date"][0].append(trace["date"][i])
-			self["date"][1].append(retrace["date"][i])
+			self["dates"][0].append(self.trace["date"][i])
+			self["dates"][1].append(self.retrace["date"][i])
 			
 
 	def ready_to_save(self) :  
