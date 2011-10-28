@@ -320,6 +320,14 @@ class cycle_process(ToSaveObject) :
 		print ("* Retrace")
 		self.retrace.sanity_check()
 
+	def load_dates(self):
+		self["dates"] = [[],[]]
+		sweep_number = max(self.trace["sweep_number"],self.retrace["sweep_number"])
+		for i in range(sweep_number) :
+			self["date"][0].append(trace["date"][i])
+			self["date"][1].append(retrace["date"][i])
+			
+
 	def ready_to_save(self) :  
 		i = 0
 		for x in self["detection"]  :
