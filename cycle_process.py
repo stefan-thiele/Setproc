@@ -329,3 +329,13 @@ class cycle_process(ToSaveObject) :
 	def post_loading(self) :
 		for i in range(len(self["detection"])) :
 			self["detection"][i] = Stat_point(self["detection"][i])
+
+
+	def reset(self) :
+			todelete = self.keys()
+			for x in todelete :
+				if x == "metadata" or x == "filenames" :
+					continue
+				else :
+					self.pop(x)
+
