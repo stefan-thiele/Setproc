@@ -1,3 +1,9 @@
+#############
+###This file gather all the function used specifically by the map class
+####
+
+
+
 def get_coupling():
     """
     This function gives the coupling of the sample to the gate source and drain as weel as the alpha factor given by Cg/Ct .
@@ -49,5 +55,64 @@ def plot_profile(im):
     data = im.get_array()
     plot( linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0))
     return [linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0),Vg]
+
+
+def check_merge_map(map1,map2):
+    meta1 = map1["metadata"]
+    meta2 = map2["metadata"]
+    x1 = meta1.keys()
+    x2 = meta2.keys()
+    if size(x1) != size(x2) :
+        print( "the two objects have not the same metadata")
+    print("here are the differences")
+    compare_dict(meta1,meta2)
+
+def compare_dict(dic1,dic2,string = ""):
+    str = string
+    if isinstance(dic1,dict):
+        for x in dic1.keys() :
+            str_tp = str+"-->"+x
+            compare_dict(dic1[x],dic2[x],str_tp)
+    else:
+        if dic1 != dic2 :
+            print(" ------------>!!!!!!DIFF !!!!!!! ---------------->")
+            print(str)
+            print(dic1)
+            print("different from")
+            print(dic2)
+            return False
+        else:
+            return True
+
+    return True
+
+def map_merge(map1,map2):
+    extent1 = map1["extent"]
+    X1min = extent1[0]
+    X1max = extent1[1]
+    extent2 = map2["extent"]
+    X2min = extent2[0]
+    X2max = extent2[1]
+    point_nbr1 = size(map1["data"])/size(map1["data"][0])
+    point_nbr2 = size(map2["data"])/size(map2["data"][0])
+
+
+    if extent1[2] != extent2[2] or extent1[3] !=  extent2[3] :
+        print("not the same bias.. cannot merge")
+        return 0
+    elif point_nbr1 != point_nbr2 :
+        print("not the same point number.... aborted")
+    else :
+        if X1min > X2min :
+            map1["extent"] = [X2min,X1max,extent1[2],extent1[3]]
+
+            map1["data"] = matrix(map2["data"]).transpose().tolist()+matrix(map1["data"]).transpose().tolist()
+            map1["data"] = matrix(map1["data"]).transpose().tolist()
+        if X2min > X1min :
+            map1["extent"] = [X1min,X2max,extent1[2],extent1[3]]
+            map1["data"] = matrix(map1["data"]).transpose().tolist()+matrix(map2["data"]).transpose().tolist()
+            map1["data"] = matrix(map1["data"]).transpose().tolist()
+
+    return True
 
 
