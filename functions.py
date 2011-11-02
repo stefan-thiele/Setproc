@@ -4,6 +4,22 @@ This file contains all the functions needed for the different classes
 @@@@@@@@@@@@@@@@@@@@@@@@@
 """
 
+####################################
+def save_obj_txt(filename,obj) :
+    stream = open(filename,"w")
+    stream.write(str(obj))
+    stream.close()
+    return True
+
+
+def cyc_save_fig(filename, fig, cyc,format = "png"):
+    os.mkdir(filename)
+    figfile = filename+"/"+filename + "." + format
+    fig.savefig(figfile)
+    txtfile = filename+"/"+filename+".txt"
+    save_obj_txt(txtfile,cyc["calibration"])
+    return True
+
 
 ####################################
 def get_json(filename) :
