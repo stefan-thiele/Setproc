@@ -1,21 +1,33 @@
 *******
+***General
+**
+-> Finish to clean the code in order for it to be easier to read (+ tab->space).
+-> Create a folder to gather all the functions
+-> Divide big files of functions in smaller individual set of correlated functions
+
+
+*******
 ***cycle_process.py
 **
 -> give the possibility for each one of the statistic representation to select a substet of detection.
 -> while loading : if there is any JSONDecodeErro, discard both trace and retrace an continue loading files
 -> Suppress the double sanity_check when only one file is loaded
+-> Correct the error in get_A_R() : it has to be trace[i+1] vs retrace[i]
+-> Implement a function taking care of the time checking to make the code shorter
 
 
 ******
 ***plot_i.py
 **
 -> Add more control on tick
--> Check for possible extension using enthought
+-> imshow map to implement
+-> Improve the control on 2D plot with saving possibilities in png and ps format
+-> Add possibilities of interaction with the plots
 
 *****
 ***g_b.py
 **
--> Implement in Cython a function which return at once min,max,argmin,argmax of an array
+-> Implement in Cython a function which return at once min,max,argmin,argmax of an array (half done.. with local minimum..)
 
 
 *****
@@ -23,3 +35,4 @@
 **
 -> Clean somehow the parameters with two different moving average within the filter allowing a faster smoothing of the signal.
 -> Try to implement it in Cython as well
+-> Change name not to overwrite the builtin function

@@ -51,17 +51,17 @@ def extract_stat(sweep,seuil1,seuil2,span) :
 				if(in_max_arg + span > i) :
 					in_max = 0
 					in_max_arg = -1
-	
+
 	if in_min > temp_min :
 		in_min = temp_min
 		in_min_arg = temp_min_arg
-	
+
 	if in_max < temp_max :
 		in_max = temp_min
 		in_max_arg = temp_max_arg
-	
-	return in_min, in_min_arg, in_max, in_max_arg		
-	
+
+	return in_min, in_min_arg, in_max, in_max_arg
+
 
 
 
