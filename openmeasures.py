@@ -113,7 +113,7 @@ class OpenJson(dict):
             for i in range(sweep_number):
                 self["date"].append(monjson["measures"][i]["start"])
                 self["data"].append(json_data(monjson,i,2))
-                K.pop(K.index("measures"))
+            K.pop(K.index("measures"))
             if (size(K) > 0) :
                 self["metadata"] = dict([])
                 for x in K :
