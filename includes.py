@@ -16,5 +16,6 @@ execfile(folder+"Stat_point.py") #Load the Stat_point object used in sweep_set_o
 execfile(folder+"filter.py") #contain the filer detecting the jump
 execfile(folder+"functions.py")
 execfile(folder+"openmeasures.py")
+execfile(folder+"map.py")
 execfile(folder+"g_b.py")
 execfile(folder+"cycle_process.py")
