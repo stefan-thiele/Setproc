@@ -1,0 +1,4 @@
+#C source files
+*.c
+#bluilding folder
+build/
