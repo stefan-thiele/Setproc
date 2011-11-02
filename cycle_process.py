@@ -50,20 +50,39 @@ class cycle_process(ToSaveObject) :
             self.retrace = merge_GB(GB_array2)
             del(GB_array2)
 
-        #Final checking!!
-        print "Finale sanity check once merged"
-        print "trace...."
-        self.trace.sanity_check()
-        print "retrace..."
-        self.retrace.sanity_check()
-        self["metadata"] = self.trace["metadata"]
-        del(self.filenames_trace)
-        del(self.filenames_retrace)
+            #Final checking!!
+            print "Finale sanity check once merged"
+            print "trace...."
+            self.trace.sanity_check()
+            print "retrace..."
+            self.retrace.sanity_check()
+            self["metadata"] = self.trace["metadata"]
+            del(self.filenames_trace)
+            del(self.filenames_retrace)
 
     def get_stat(self,i_start,w,power=1,sw=1,mode = "classic",seuil1 = 0, seuil2 = 0, span = 50) :
         """
         get_stat allows to detect the jumps going through all the sweeps. It uses directly the function get_jump_2 of the sweep_set_open object. This data are stored independtly from the trace and retrace file. The syntax is the following get_stat(seuil,i_start,w) where seuil is the threshold of detection, i_start is the number of points to skip from zero, and w is the filter widht (see the filter doc for more information).
         """
+        self.reset_calibration()
+        if mode == "classic" :
+            self["calibration"]["stat"]["mode"] = mode
+            self["calibration"]["stat"]["w"] = w
+            self["calibration"]["stat"]["sw"] = sw
+            self["calibration"]["stat"]["power"] = power
+            self["calibration"]["stat"]["i_start"] = i_start
+
+        else:
+            self["calibration"]["stat"]["mode"] =  mode
+            self["calibration"]["stat"]["seuil1"] = seuil1
+            self["calibration"]["stat"]["seuil2"] = seuil2
+            self["calibration"]["stat"]["w"] = w
+            self["calibration"]["stat"]["sw"] = sw
+            self["calibration"]["stat"]["power"] = power
+            self["calibration"]["stat"]["i_start"] = i_start
+            self["calibration"]["stat"]["span"] = span
+
+
         self["detection"] = []
         sweep_number = max(self.trace["sweep_number"],self.retrace["sweep_number"])
         si = size(self.trace["bias"])
@@ -99,7 +118,12 @@ class cycle_process(ToSaveObject) :
         return True
 
 
-    def get_hist(self,points,rge,shift_B,seuil1,seuil2,shift_trace=1):
+    def get_hist(self,points, shift_trace=1):
+        seuil1 = self["calibration"]["plot"]["seuil1"]
+        seuil2 = self["calibration"]["plot"]["seuil2"]
+        shift_B = self["calibration"]["plot"]["offset"]
+        trace_range = self["calibration"]["plot"]["range"]
+        rge = [trace_range,trace_range]
         temp = []
         siup = size(self["detection"])
         for i in range(siup) :
@@ -114,18 +138,20 @@ class cycle_process(ToSaveObject) :
 
 
 
-    def get_A_R(self,seuil1,seuil2) :
+    def get_A_R(self) :
         """
         This function parse the data and store all the sweep for which there was a jump both for the trace and retrace. They are store in ["AvsR"], the first element ["AvsR"][0] being the trace and the second the retrace.
         """
+        seuil1 = self["calibration"]["plot"]["seuil1"]
+        seuil2 = self["calibration"]["plot"]["seuil2"]
         self["AvsR"] = [[],[]]
         size_detect = size(self["detection"])
         itera = size_detect/4
-        for i in range(itera) :
+        for i in range(itera-4) :
             traceok = False
             retraceok = False
-            trace1 = self["detection"][4*i]
-            trace2 = self["detection"][4*i+1]
+            trace1 = self["detection"][4*i+4] #The +4 is due to the fact that the waiting time is done during trace
+            trace2 = self["detection"][4*i+1+4]
             retrace1 = self["detection"][4*i+2]
             retrace2 = self["detection"][4*i+3]
             #check first which trace has to be taken
@@ -176,10 +202,14 @@ class cycle_process(ToSaveObject) :
                 self["AvsR"][1].append(retrace_push)
 
 
-    def sort_data(self,seuil1,seuil2,offset) :
+    def sort_data(self) :
         """
         This function sort the jumps first according to trace and retrace and then according to the kind of transition, either up or done. For more information on the label up and down, please refer to the documentation of get_jump2.
         """
+        seuil1 = self["calibration"]["plot"]["seuil1"]
+        seuil2 = self["calibration"]["plot"]["seuil2"]
+        offset = self["calibration"]["plot"]["offset"]
+
         self["sort"] = dict()
         self["sort"]["trace"] = dict()
         self["sort"]["trace"]["up"] = []
@@ -204,6 +234,10 @@ class cycle_process(ToSaveObject) :
         return True
 
     def get_double(self,seuil1,seuil2,offset):
+        seuil1 = self["calibration"]["plot"]["seuil1"]
+        seuil2 = self["calibration"]["plot"]["seuil2"]
+        offset = self["calibration"]["plot"]["offset"]
+
         self["double"] = dict()
         self["double"]["trace"] = [[],[]]
         self["double"]["retrace"] = [[],[]]
@@ -245,6 +279,11 @@ class cycle_process(ToSaveObject) :
         return True
 
     def get_span_sweep_nbr(self,seuil1,seuil2):
+
+        seuil1 = self["calibration"]["plot"]["seuil1"]
+        seuil2 = self["calibration"]["plot"]["seuil2"]
+
+
         self["span_swep_nbr"] = [[],[]]
         tot_size = size(self["detection"])
         itera = int(tot_size/4)
@@ -337,9 +376,60 @@ class cycle_process(ToSaveObject) :
 
         return hist(result,25)
 
-########################################################
-###This part is dedicated to saving and loading the data
-###
+    def set_plot_calibration(self,args = "None"):
+        if args == "None":
+            print("to be done")
+        else :
+            self["calibration"]["plot"]["seuil1"] = args[0]
+            self["calibration"]["plot"]["seuil2"] = args[1]
+            self["calibration"]["plot"]["range"] = args[2]
+            self["calibration"]["plot"]["offset"] = args[3]
+
+    def reset_calibration(self):
+        self["calibration"] = dict()
+        #parameters used for stat
+        self["calibration"]["stat"] = dict()
+        self["calibration"]["stat"]["seuil1"] = "None"
+        self["calibration"]["stat"]["seuil2"] = "None"
+        self["calibration"]["stat"]["w"] = "None"
+        self["calibration"]["stat"]["sw"] = "None"
+        self["calibration"]["stat"]["power"] = "None"
+        self["calibration"]["stat"]["i_start"] = "None"
+        #parameter used for plotting
+        self["calibration"]["plot"] = dict()
+        self["calibration"]["plot"]["seuil1"] = "None"
+        self["calibration"]["plot"]["seuil1"] = "None"
+        self["calibration"]["plot"]["range"] = "None"
+        self["calibration"]["plot"]["offset"] = "None"
+
+
+    ########################################################
+    ###This part contains the functions allowing some interaction with the object through menu
+    ###
+
+    def menu(self) :
+        print("Make your choice")
+        print("1 ----> Extract statistique")
+
+        if choice == 1 :
+            self.menu_stat(self)
+
+        return True
+
+
+    def menu_stat(self):
+        print("Let's proceed to the statistic extraction")
+        print("Choose the mode : ")
+        print("  1 ----> Classic")
+        print("  2 ----> Double threshold")
+        return True
+
+
+
+
+    ########################################################
+    ###This part is dedicated to saving and loading the data
+    ###
 
     def save_all(self,tracefile,retracefile,whole_experiment) :
         """
