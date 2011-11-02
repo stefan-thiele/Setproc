@@ -28,7 +28,7 @@ class Map(ToSaveObject) :
     def map_phase(self) :
         self.fig = figure()
         self.ax = self.fig.add_subplot(111)
-        self.im = imshow(self["data"], origin="lower",extent = self["extent"])
+        self.im = imshow(self["data"], interpolation = "nearest", origin="lower",extent = self["extent"])
         self.col = self.fig.colorbar(self.im)
         self.ax.set_aspect("auto")
 
@@ -43,4 +43,7 @@ class Map(ToSaveObject) :
 
     def check_merge(self,other):
         return check_merge_map(self,other)
+
+    def merge(self,other):
+        return merge_map(self,other)
 
