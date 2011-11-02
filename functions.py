@@ -14,30 +14,6 @@ def get_json(filename) :
 	return  result
 
 
-####################################
-def get_coupling():
-	"""	
-	This function gives the coupling of the sample to the gate source and drain as weel as the alpha factor given by Cg/Ct . 
-	One has to give four point, starting with the slope defined by Cg/Cs and then the one defined by Cg / (Cd +Cg). It retunrs the result 
-	as Cs Cd and alpha.
-	"""
-	temp = ginput(4)
-	Cs = np.abs( (temp[0][0] - temp[1][0]) / (temp[0][1] - temp[1][1])) * 1e3
-	tp = np.abs( ( temp[2][1] - temp[3][1] )/(temp[2][0] - temp[3][0])) * 1e-3
-	Cd = (1 - tp)/ tp
-	alp = 1 / (Cs + 1 +Cd)
-	return [Cs,Cd,alp] 
-
-
-####################################
-def get_slope():
-	"""
-	Given two points, give the slope a line
-	"""
-	temp = ginput(2)
-	return (temp[0][1] - temp[1][1])/(temp[0][0] - temp[1][0])
-
-
 
 #####################################
 def getposcolumn(data,string):
@@ -62,7 +38,7 @@ def json_data(jsonobject,i,column) :
 
 	if type(column) == str:
 		try :
-			column = getposcolumn(data_temp,column)	
+			column = getposcolumn(data_temp,column)
 		except :
 			print "There is not such a column name, taking column = 1"
 			column = 1
@@ -77,7 +53,7 @@ def json_data(jsonobject,i,column) :
 ######################################
 def colarray(data, colnum, rem):
 	"""
-	This function give back the column of an array given the array and the column number to be extracted. 
+	This function give back the column of an array given the array and the column number to be extracted.
 	The third parameter allow to get ride of the first terms of the column.
 	"""
 	temp = []
@@ -90,7 +66,7 @@ def colarray(data, colnum, rem):
 def colarray_pol(data,A,B,theta):
 	"""
 	This function is dedicated to the polarplot in oder to take into account the signe of the magnetic field in the trace - retrace pot
-	"""		
+	"""
 	temp = []
 	for i in range( len(data)):
 		temp.append(data[i][1] * sign(data[i][0]) - A*abs(sin(theta)) - B*abs(cos(theta)))
@@ -123,7 +99,7 @@ def getoutputs(data):
 	"""
 	This function give the outputs used for a measurement given the corresponding json file.
 	"""
-	
+
 	inputs = data["outputs"]
 	result = []
 	for x in inputs:
@@ -163,7 +139,7 @@ def extractScilab(data):
 	"""
 	This function allows to extract the data from a CSV like file. This is the function that should be used for the old transfrom data.
 	"""
-	
+
 	raw = size(data) / size(data[1])
 	result = []
 	for i in range(raw-1) :
@@ -172,37 +148,9 @@ def extractScilab(data):
 
 
 #######################################
-def plot_profile_h(im):
-	"""
-	Given a point on the Coulomb Map, this function plot the corresponding profile and returns a array of two columns [V,dI/dV]
-	"""
-	y = ginput()[0][1]
-	xm,  Xm = im.get_extent()[0:2]
-	ym,  Ym = im.get_extent()[2:4]
-	sweep_n = size(im.get_array()) / size(im.get_array()[0])
-	nbr =  (1. * sweep_n / abs(Ym - ym)) * (y-ym) 
-	figure()
-	data = im.get_array()
-	plot(linspace(xm, Xm, size(im.get_array()[0])) ,  data[nbr])
-	return [linspace(xm, Xm, size(im.get_array()[0]))  , data[nbr]]
-
 
 
 #######################################
-def plot_profile(im):
-	"""
-	Given a point on the Coulomb Map, this function plot the corresponding profile and returns a array of two columns [V,dI/dV]
-	"""
-	x = ginput()[0][0]
-	xm,  Xm = im.get_extent()[0:2]
-	ym,  Ym = im.get_extent()[2:4]
-	sweep_n = size(im.get_array()[0])
-	nbr =  (1. * sweep_n / abs(Xm - xm)) * (x-xm)
-	Vg = xm + nbr * (Xm-xm)/sweep_n 		
-	figure()
-	data = im.get_array()
-	plot( linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0))
-	return [linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0),Vg]
 
 
 #######################################
@@ -237,7 +185,7 @@ def plot_int(data):
 	plot(vd, result)
 	x= ginput()
 	for i in range(len(result)) :
-		result[i] = result[i] -x[0][1] 
+		result[i] = result[i] -x[0][1]
 	f.clear()
 	plot(vd, result)
 	return result
@@ -258,7 +206,7 @@ def sum_over(data) :
 	result = []
 	for i in range(len(data)) :
 		result.append(sum(data[0:i+1]))
-	
+
 	return result
 
 
@@ -292,7 +240,7 @@ def check_span(X,Y,span):
 				if(Yloc[i] > Yloc[j]) :
 					if to_delete.__contains__(j) == False :
 						to_delete.append(j)
-				else :	
+				else :
 					if to_delete.__contains__(i) == False :
 						to_delete.append(i)
 	to_delete = array(to_delete)
@@ -302,33 +250,5 @@ def check_span(X,Y,span):
 		Xloc.pop(to_delete[si-i-1])
 		Yloc.pop(to_delete[si-i-1])
 
-	return [Xloc,Yloc] 
-
-
-############################################
-def max_local(X,Y,separation) :
-	result = [[],[]]
-	size_array = size(Y)
-	for i in range(size_array) :
-		if(i >0 and i < size_array-1 and (Y[i-1] < Y[i] and Y[i] > Y[i+1])) :
-			result[0].append(X[i])
-			result[1].append(Y[i])
-	result = fct3.check_span(array(result[0]),array(result[1]),separation) 
-
-	return result
-
-
-
-############################################
-def get_jump(X,Y,seuil,span) :
-	jumps = max_local(X,Y,span)
-	Xs = list(jumps[0])
-	Ys = list(jumps[1])
-	si_Ys = size(Ys)
-	for i in range(si_Ys) :
-		if(Ys[si_Ys - (i+1)] < seuil ) :
-			Ys.pop(si_Ys - (i+1))
-			Xs.pop(si_Ys - (i+1))
-	return [Xs,Ys]
-
+	return [Xloc,Yloc]
 
