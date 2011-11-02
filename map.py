@@ -6,23 +6,24 @@ class Map(ToSaveObject) :
     """
     This class is used to handle data stored in a json file. It takes a jsonfile as argument ang generate an object that makes data easier to manipulate
     """
-    def __init__(self,filename,xmin,xmax,ymin,ymax,mode = "Json") :
-        ToSaveObject.__init__self(self)
-        if mode == "Json" :
-            data = get_json(filename)
-            temp_data = getcolumns(data, getposcolumn(data,"real"), self._sweep_number)
+    def __init__(self,filename,Xchannel,Ychannel,mode = "Json") :
+        ToSaveObject.__init__(self)
 
-            self["data"] = matrix(temp_data).transpose().tolist()
-            self["extent"] = [xmin,xmax,ymin,ymax]
-            self["inputs"] = getinputs(data)
-            self["outputs"] = getoutputs(data)
-            self["sweep_number"] = size(self["data"])
+        if mode == "Json" :
+            temp = OpenJson(filename)
         elif mode == "Bin" :
             temp = OpenBin(filename)
-            for x in temp :
-                self[x] = temp[x]
-            del(temp)
 
+        for x in temp :
+            self[x] = temp[x]
+        del(temp)
+
+        if mode == "Json" :
+            self["data"] = matrix(self["data"]).transpose().tolist()
+
+        X = self["metadata"][Xchannel]
+        Y = self["metadata"][Ychannel]
+        self["extent"] = [X["min"],X["max"],Y["min"],Y["max"]]
 
     def map_phase(self) :
         self.fig = figure()
@@ -39,4 +40,7 @@ class Map(ToSaveObject) :
 
     def get_coupling(self):
         return get_coupling()
+
+    def check_merge(self,other):
+        return check_merge_map(self,other)
 
