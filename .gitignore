@@ -1,4 +1,8 @@
 #C source files
 *.c
+#temp file
+*.swp
 #bluilding folder
 build/
+#rope folder
+.ropeproject/
