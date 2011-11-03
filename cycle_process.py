@@ -208,7 +208,6 @@ class cycle_process(ToSaveObject) :
         """
         seuil1 = self["calibration"]["plot"]["seuil1"]
         seuil2 = self["calibration"]["plot"]["seuil2"]
-        offset = self["calibration"]["plot"]["offset"]
 
         self["sort"] = dict()
         self["sort"]["trace"] = dict()
@@ -227,9 +226,9 @@ class cycle_process(ToSaveObject) :
 
             if topush.trace == False and abs(topush.value) > seuil1 and abs(topush.value) < seuil2 :
                 if topush.up == False :
-                    self["sort"]["retrace"]["down"].append(topush.field - offset)
+                    self["sort"]["retrace"]["down"].append(topush.field)
                 else :
-                    self["sort"]["retrace"]["up"].append(topush.field - offset)
+                    self["sort"]["retrace"]["up"].append(topush.field)
 
         return True
 
@@ -402,8 +401,15 @@ class cycle_process(ToSaveObject) :
         self["calibration"]["plot"]["range"] = "None"
         self["calibration"]["plot"]["offset"] = "None"
 
+    def calibrate_offset(self):
+        print("Select the trace then the retrace")
+        rge = self["calibration"]["plot"]["range"]
+        figt1 = figure()
+        hist(self["sort"]["trace"]["up"],100,rge)
+        hist(self["sort"]["retrace"]["up"],100,rge)
+        temp = ginput(2)
+        self["calibration"]["plot"]["offset"] = temp[1][0] - temp[0][0]
 
-    ########################################################
     ###This part contains the functions allowing some interaction with the object through menu
     ###
 
@@ -478,6 +484,6 @@ class cycle_process(ToSaveObject) :
         for x in todelete :
             if x == "metadata" or x == "filenames" :
                 continue
-        else :
-            self.pop(x)
+            else :
+                self.pop(x)
 
