@@ -1,3 +1,7 @@
+from setproc.common.function.json_handling import json_data
+from setproc.common.function.open_files import get_json
+from numpy import size
+
 class OpenJson(dict):
     """
     This allows to parse a json file and generate a python object from it. The argument to be given is the filename of the json file. The function returns the data in a python object format.
