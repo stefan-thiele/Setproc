@@ -1,6 +1,7 @@
 import cPickle
 from copy import deepcopy
-
+from setproc.common.classes.open_bin import OpenBin
+from setproc.common.classes.open_json import OpenJson
 
 class Measure(dict) :
     """
