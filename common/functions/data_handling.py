@@ -1,4 +1,6 @@
-from numpy import sign, sin, cos, size
+from numpy import sign, sin, cos, size, array
+from scipy import integrate
+from pylab import plot, ginput, figure
 
 def colarray(data, colnum, rem):
     """
@@ -34,4 +36,35 @@ def sum_over(data) :
     result = []
     for i in range(len(data)) :
         result.append(sum(data[0:i+1]))
+    return result
+
+
+def plotdata(data, x, y):
+    """
+    This function plot a 2D curve given a json data and the column number of x and y axis.
+    """
+    plot(colarray(data, x, 0), colarray(data, y, 0))
+    return True
+
+
+def plot_int(data):
+    """
+    Given a array of data in the form [V, dI/dV], it comutes and plot the integral. This fonction can be used together with plot_profile
+    to evaluate the gamma parameters of the sample.
+    """
+    result = []
+    for i in range(len(data[0])+1):
+        if i > 0 :
+            result.append(integrate.simps(data[0][0:i], data[1][0:i]))
+    f = figure()
+    result.reverse()
+    vd =  array(data[1])
+    vd = vd.tolist()
+    vd.reverse()
+    plot(vd, result)
+    x = ginput()
+    for i in range(len(result)) :
+        result[i] = result[i] -x[0][1]
+    f.clear()
+    plot(vd, result)
     return result
