@@ -9,7 +9,7 @@ import moving_average as mva
 import extract_stat as exst
 import cPickle   #used to save the data
 import time
-
+import os
 
 
 execfile(folder+"Stat_point.py") #Load the Stat_point object used in sweep_set_open and cycle_process

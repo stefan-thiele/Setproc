@@ -6,3 +6,5 @@
 build/
 #rope folder
 .ropeproject/
+#__init__ files
+__init__.py
