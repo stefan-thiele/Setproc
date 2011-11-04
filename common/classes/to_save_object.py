@@ -6,7 +6,7 @@ class ToSaveObject(dict) :
         dict.__init__(self)
 
 
-    def save(self,savename) :
+    def save(self, savename) :
         """
         Save all the keys field of a dictionnary in savename file. The "*.bin" extension should be used
         """
@@ -16,11 +16,11 @@ class ToSaveObject(dict) :
         except IOError :
             print "Problem while saving the file"
             done = False
-        l =[]
+        l = []
         temp = self.keys()
         l.append(temp) # this will be used when loading the file to set the keys of the dictionnary created
         for x in self:
             l.append(self[x])
-        cPickle.dump(l,stream,1)
+        cPickle.dump(l, stream, 1)
 
         return done
