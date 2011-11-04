@@ -1,25 +1,3 @@
-
-def getposcolumn(data,string):
-	"""
-	This function allows to obtain the column number in a json file sweep given the name of the input
-	"""
-	result = 0
-	for i in range(size(data["measures"][0]["columns"])) :
-		if(data["measures"][0]["columns"][i] == string) :
-			result = i+1
-	return result
-
-######################################
-
-
-######################################
-
-
-######################################
-
-
-
-#######################################
 def plotdata(data, x, y):
 	"""
 	This function plot a 2D curve given a json data and the column number of x and y axis.
@@ -27,41 +5,6 @@ def plotdata(data, x, y):
 	plot(colarray(data, x, 0), colarray(data, y, 0))
 	return True
 
-
-########################################
-def getinputs(data):
-	"""
-	This function give the inputs used for a measurement given the corresponding json file.
-	"""
-	inputs = data["inputs"]
-	result = []
-	for x in inputs:
-		result.append(str(data["inputs"][x]["name"]).replace("u", ""))
-	return result
-
-########################################
-def getoutputs(data):
-	"""
-	This function give the outputs used for a measurement given the corresponding json file.
-	"""
-
-	inputs = data["outputs"]
-	result = []
-	for x in inputs:
-		result.append(str(data["outputs"][x]["name"]).replace("u", ""))
-	return result
-
-########################################
-def getcolumns(data, col_num, sweep_num):
-	"""
-	This function allows to access to one column of a json file sweep given the sweep and the column numbers.
-	"""
-	result = []
-	for i in range(sweep_num):
-		result.append(colarray(data["measures"][i]["data"],col_num , 0))
-	return result
-
-#######################################
 def extract_pop(histo,nbr_pic,width) :
 	result = []
 	X = ginput(nbr_pic)
