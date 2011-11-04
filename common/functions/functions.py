@@ -244,27 +244,3 @@ def merge_GB(GB_array) :
 	return GB_temp
 
 
-#########################################
-def check_span(X,Y,span):
-	size_X = size(X)
-	Xloc = list(X)
-	Yloc = list(Y)
-	to_delete = []
-	for i in range(size_X) :
-		for j in range(size_X) :
-			if(abs(Xloc[i] - Xloc[j]) < span  and i != j) :
-				if(Yloc[i] > Yloc[j]) :
-					if to_delete.__contains__(j) == False :
-						to_delete.append(j)
-				else :
-					if to_delete.__contains__(i) == False :
-						to_delete.append(i)
-	to_delete = array(to_delete)
-	to_delete.sort()
-	si = size(to_delete)
-	for i in range(si) :
-		Xloc.pop(to_delete[si-i-1])
-		Yloc.pop(to_delete[si-i-1])
-
-	return [Xloc,Yloc]
-
