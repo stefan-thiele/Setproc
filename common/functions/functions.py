@@ -4,17 +4,6 @@ This file contains all the functions needed for the different classes
 @@@@@@@@@@@@@@@@@@@@@@@@@
 """
 
-
-def get_json(filename) :
-	"""
-	Given a json filename, return the corresponding python object.
-	"""
-	result =  json.load(open(filename,'r'))
-	return  result
-
-
-
-#####################################
 def getposcolumn(data,string):
 	"""
 	This function allows to obtain the column number in a json file sweep given the name of the input
