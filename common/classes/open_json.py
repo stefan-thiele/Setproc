@@ -1,5 +1,5 @@
-from setproc.common.function.json_handling import json_data
-from setproc.common.function.open_files import get_json
+from setproc.common.functions.json_handling import json_data
+from setproc.common.functions.open_files import get_json
 from numpy import size
 
 class OpenJson(dict):
