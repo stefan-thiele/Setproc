@@ -58,3 +58,8 @@
 -> Clean somehow the parameters with two different moving average within the filter allowing a faster smoothing of the signal.
 -> Try to implement it in Cython as well
 -> Change name not to overwrite the builtin function
+
+*****
+***json_handling.py
+**
+--> Define more precisely the error type if possible
