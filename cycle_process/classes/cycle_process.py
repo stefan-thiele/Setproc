@@ -1,9 +1,11 @@
 import time #to handle the time checking,
-from Common.openmeasures import ToSaveObject, OpenBin #to be able to open json and bin files
-from Common.functions import merge_GB
-from G_B.classes.g_b import sweep_set_open #to open and manage sweep_set_open objects
-from G_B.classes.Stat_point import Stat_point
-
+from setproc.common.classes.to_save_object import ToSaveObject
+from setproc.common.classes.open_bin import OpenBin #to be able to open json and bin files
+from setproc.sweep_set.functions.merge_gb import merge_GB
+from setproc.sweep_set.classes.sweep_set import sweep_set_open #to open and manage sweep_set_open objects
+from setproc.sweep_set.classes.stat_point import Stat_point
+from numpy import size, histogram2d, log10, array
+from matplotlib.pyplot import figure, title, hist, ginput
 
 class cycle_process(ToSaveObject) :
     """
@@ -11,7 +13,7 @@ class cycle_process(ToSaveObject) :
     The syntax depends if you have weither or not already extracted data. If it is the case, the syntax is cycle_process("filename"). Otherwise it is cycle_process("trace_filename","retrace_filemane",list of the increment values,and mode (usually "Json")). A sanity_check is performed on each sweep as weel as on the merged ones.
     """
 
-    def __init__(self,trace,retrace = None ,interval = None, mode = "Json"):
+    def __init__(self, trace, retrace = None , interval = None, mode = "Json"):
         ToSaveObject.__init__(self)
         self.filenames_trace = []
         self.filenames_retrace = []
@@ -32,8 +34,8 @@ class cycle_process(ToSaveObject) :
 
             #Load the files of the filename array
             for x in self.filenames_trace :
-                print "Loading ",x," file. Please wait.."
-                GB_array1.append(sweep_set_open(x,mode))
+                print "Loading ", x, " file. Please wait.."
+                GB_array1.append(sweep_set_open(x, mode))
                 GB_array1[-1].sanity_check()
             print "Merging...."
             #merge all the GB object in a single one and delete the GB array
@@ -46,8 +48,8 @@ class cycle_process(ToSaveObject) :
                 self.filenames_retrace.append(str(i)+retrace)
 
             for x in self.filenames_retrace :
-                print "Loading ",x," file. Please wait.."
-                GB_array2.append(sweep_set_open(x,mode))
+                print "Loading ", x, " file. Please wait.."
+                GB_array2.append(sweep_set_open(x, mode))
                 GB_array2[-1].sanity_check()
             print "Merging...."
             self.retrace = merge_GB(GB_array2)
@@ -63,7 +65,7 @@ class cycle_process(ToSaveObject) :
             del(self.filenames_trace)
             del(self.filenames_retrace)
 
-    def get_stat(self,i_start,w,power=1,sw=1,mode = "classic",seuil1 = 0, seuil2 = 0, span = 50) :
+    def get_stat(self, i_start, w, power=1, sw=1, mode = "classic", seuil1 = 0, seuil2 = 0, span = 50) :
         """
         get_stat allows to detect the jumps going through all the sweeps. It uses directly the function get_jump_2 of the sweep_set_open object. This data are stored independtly from the trace and retrace file. The syntax is the following get_stat(seuil,i_start,w) where seuil is the threshold of detection, i_start is the number of points to skip from zero, and w is the filter widht (see the filter doc for more information).
         """
@@ -87,14 +89,14 @@ class cycle_process(ToSaveObject) :
 
 
         self["detection"] = []
-        sweep_number = max(self.trace["sweep_number"],self.retrace["sweep_number"])
+        sweep_number = max(self.trace["sweep_number"], self.retrace["sweep_number"])
         si = size(self.trace["bias"])
 
         for i in range(sweep_number) :
             if(i%1000 ==0 and i > 0):
                 print(str(int(100 * i/sweep_number)) + "%")
             #TRACE STAT
-            Down, Up = self.trace.get_jump(i,i_start,w,power,sw,si,mode,seuil1,seuil2,span)
+            Down, Up = self.trace.get_jump(i, i_start, w, power, sw, si, mode, seuil1, seuil2, span)
             Down.trace = True
             Up.trace = True
 
@@ -107,7 +109,7 @@ class cycle_process(ToSaveObject) :
                 self["detection"].append(Down)
 
             #RETRACE STAT
-            Down, Up = self.retrace.get_jump(i,i_start,w,power,sw,si,mode,seuil1,seuil2,span)
+            Down, Up = self.retrace.get_jump(i, i_start, w, power, sw, si, mode, seuil1, seuil2, span)
             Down.trace = False
             Up.trace = False
             #check what was detected first
@@ -121,12 +123,12 @@ class cycle_process(ToSaveObject) :
         return True
 
 
-    def get_hist(self,points, shift_trace=1):
+    def get_hist(self, points, shift_trace=1):
         seuil1 = self["calibration"]["plot"]["seuil1"]
         seuil2 = self["calibration"]["plot"]["seuil2"]
         shift_B = self["calibration"]["plot"]["offset"]
         trace_range = self["calibration"]["plot"]["range"]
-        rge = [trace_range,trace_range]
+        rge = [trace_range, trace_range]
         temp = []
         siup = size(self["detection"])
         for i in range(siup) :
@@ -137,7 +139,7 @@ class cycle_process(ToSaveObject) :
                 else :
                     temp.append(topush.field)
         siup = size(temp)
-        return histogram2d(temp[:siup-shift_trace],temp[shift_trace:siup],points,rge)
+        return histogram2d(temp[:siup-shift_trace], temp[shift_trace:siup], points, rge)
 
 
 
@@ -147,7 +149,7 @@ class cycle_process(ToSaveObject) :
         """
         seuil1 = self["calibration"]["plot"]["seuil1"]
         seuil2 = self["calibration"]["plot"]["seuil2"]
-        self["AvsR"] = [[],[]]
+        self["AvsR"] = [[], []]
         size_detect = size(self["detection"])
         itera = size_detect/4
         for i in range(itera-4) :
@@ -235,14 +237,14 @@ class cycle_process(ToSaveObject) :
 
         return True
 
-    def get_double(self,seuil1,seuil2,offset):
+    def get_double(self, seuil1, seuil2, offset):
         seuil1 = self["calibration"]["plot"]["seuil1"]
         seuil2 = self["calibration"]["plot"]["seuil2"]
         offset = self["calibration"]["plot"]["offset"]
 
         self["double"] = dict()
-        self["double"]["trace"] = [[],[]]
-        self["double"]["retrace"] = [[],[]]
+        self["double"]["trace"] = [[], []]
+        self["double"]["retrace"] = [[], []]
         tot_size = size(self["detection"])
         itera = int(tot_size/4)
 
@@ -262,7 +264,7 @@ class cycle_process(ToSaveObject) :
 
 
     def get_value_stat(self) :
-        self["value_stat"] =[[],[]]
+        self["value_stat"] = [[], []]
         for i in range(size(self["detection"])) :
             topush = abs(self["detection"][i].value)
             towhere = self["detection"][i].trace
@@ -274,19 +276,19 @@ class cycle_process(ToSaveObject) :
                     self["value_stat"][1].append(topush)
         figure()
         title("Trace")
-        hist(log10(array(self["value_stat"][0])),200)
+        hist(log10(array(self["value_stat"][0])), 200)
         figure()
         title("Retrace")
-        hist(log10(array(self["value_stat"][1])),200)
+        hist(log10(array(self["value_stat"][1])), 200)
         return True
 
-    def get_span_sweep_nbr(self,seuil1,seuil2):
+    def get_span_sweep_nbr(self, seuil1, seuil2):
 
         seuil1 = self["calibration"]["plot"]["seuil1"]
         seuil2 = self["calibration"]["plot"]["seuil2"]
 
 
-        self["span_swep_nbr"] = [[],[]]
+        self["span_swep_nbr"] = [[], []]
         tot_size = size(self["detection"])
         itera = int(tot_size/4)
         for i in range(itera) :
@@ -311,7 +313,7 @@ class cycle_process(ToSaveObject) :
         """
         This function take for each trace and retrace the value of the magnetic field corresponding at the strongest transistion. This statistic is used afterwards to plot the hysteresis cycle.
         """
-        self["hysteresis"] =[[],[]]
+        self["hysteresis"] = [[], []]
         tot_size = size(self["detection"])
         itera = int(tot_size/4)
         for i in range(itera):
@@ -330,7 +332,7 @@ class cycle_process(ToSaveObject) :
                 self["hysteresis"][1].append(retrace2.field)
 
 
-    def get_time_stat(self,mode = "retrace-trace") :
+    def get_time_stat(self, mode = "retrace-trace") :
         sweep_nbr = size(self["dates"][0])
         if mode == "trace-retrace" :
             result = []
@@ -376,9 +378,9 @@ class cycle_process(ToSaveObject) :
                 tr = time.mktime(Tr)
                 result.append(tr-tt)
 
-        return hist(result,25)
+        return hist(result, 25)
 
-    def set_plot_calibration(self,args = "None"):
+    def set_plot_calibration(self, args = "None"):
         if args == "None":
             print("to be done")
         else :
@@ -407,9 +409,9 @@ class cycle_process(ToSaveObject) :
     def calibrate_offset(self):
         print("Select the trace then the retrace")
         rge = self["calibration"]["plot"]["range"]
-        figt1 = figure()
-        hist(self["sort"]["trace"]["up"],100,rge)
-        hist(self["sort"]["retrace"]["up"],100,rge)
+        figure()
+        hist(self["sort"]["trace"]["up"], 100, rge)
+        hist(self["sort"]["retrace"]["up"], 100, rge)
         temp = ginput(2)
         self["calibration"]["plot"]["offset"] = temp[1][0] - temp[0][0]
 
@@ -440,7 +442,7 @@ class cycle_process(ToSaveObject) :
     ###This part is dedicated to saving and loading the data
     ###
 
-    def save_all(self,tracefile,retracefile,whole_experiment) :
+    def save_all(self, tracefile, retracefile, whole_experiment) :
         """
         This function allows to save the data in binary format. This make them faster to load. The syntax is as follow : save_all(filename_for_trace,filename_for_retrace,filename_for_data_extracted)
         """
@@ -452,12 +454,12 @@ class cycle_process(ToSaveObject) :
         self.post_loading()
 
 
-    def load_sweeps(self,mode="npz") :
+    def load_sweeps(self, mode="npz") :
         """
         to be documented latter
         """
-        self.trace = sweep_set_open(self["filenames"][0],mode)
-        self.retrace = sweep_set_open(self["filenames"][1],mode)
+        self.trace = sweep_set_open(self["filenames"][0], mode)
+        self.retrace = sweep_set_open(self["filenames"][1], mode)
         print ("Sanity checks")
         print ("* Trace")
         self.trace.sanity_check()
@@ -465,8 +467,8 @@ class cycle_process(ToSaveObject) :
         self.retrace.sanity_check()
 
     def load_dates(self):
-        self["dates"] = [[],[]]
-        sweep_number = max(self.trace["sweep_number"],self.retrace["sweep_number"])
+        self["dates"] = [[], []]
+        sweep_number = max(self.trace["sweep_number"], self.retrace["sweep_number"])
         for i in range(sweep_number) :
             self["dates"][0].append(self.trace["date"][i])
             self["dates"][1].append(self.retrace["date"][i])
