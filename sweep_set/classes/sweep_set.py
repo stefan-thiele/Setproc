@@ -5,7 +5,6 @@ from setproc.sweep_set.classes.stat_point import Stat_point
 from setproc.sweep_set.functions.extract_stat import extract_stat
 from setproc.sweep_set.functions.merge_gb import merge_GB
 from setproc.sweep_set.functions.filter import filter
-from numpy import size, array, load
 from matplotlib.pyplot import figure, draw, show, get_fignums
 import numpy as np
 import cPickle
@@ -23,7 +22,7 @@ class sweep_set_open(dict) :
     def __init__(self, filename, mode) :
         dict.__init__(self)
         if mode == "npz" :
-            temp = load(filename)
+            temp = np.load(filename)
             for x in temp.files :
                 self[x] = deepcopy(temp[x])
             del(temp)
@@ -41,9 +40,9 @@ class sweep_set_open(dict) :
         up = Stat_point()
         down = Stat_point()
         if si == "None" :
-            si = size(self["bias"])
+            si = np.size(self["bias"])
         bsweep = self["bias"][i_start+(w-1)+sw/2:si-(w-1)-sw/2+1-sw%2]
-        temp_array = array(self["data"][nbr][i_start:], dtype = np.float)
+        temp_array = np.array(self["data"][nbr][i_start:], dtype = np.float)
         jump = filter(temp_array, w, power, sw)
         if mode == "classic" :
             if( nbr == 0) :
@@ -78,11 +77,11 @@ class sweep_set_open(dict) :
 
 
     def sanity_check(self) :
-        size_bias = size(self["bias"])
+        size_bias = np.size(self["bias"])
         nbr = None
         temp = 0
         for i in range(self["sweep_number"]) :
-            size_data = size(self["data"][i])
+            size_data = np.size(self["data"][i])
             if (size_data < size_bias ) :
                 nbr = i
                 for j in range(size_bias - size_data) :
@@ -117,7 +116,7 @@ class sweep_set_open(dict) :
             self.fig = figure()
         X = self["bias"][i_start:]
         Y = self["data"][nbr][i_start:]
-        si = size(self["bias"][i_start:])
+        si = np.size(self["bias"][i_start:])
         self.ax1 = self.fig.add_subplot(211)
         self.ax1.plot(X, Y)
         self.ax1.set_xlim(X[0], X[si-1])
