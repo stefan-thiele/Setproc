@@ -6,25 +6,35 @@
 -> Divide big files of functions in smaller individual set of correlated functions
 -> Adopt more structured folder layout :
  Setproc---|
-	   -----> common-|-->classes
-           |             |
-	   |	         |-->functions
+	   -----> common------------->|-->classes
+           |                          |
+	   |	                      |-->functions
+           |                          |
+           |                          |-->cfunctions
 	   |
-	   -----> cycle_process	|-->classes
-           |                    |
-           |                    |-->functions
+	   -----> cycle_process------>|-->classes
+           |                          |
+           |                          |-->functions
+           |                          |
+           |                          |-->cfunctions
  	   |
-	   -----> sweep_set|-->classes
-           |               |
-	   |	           |-->functions
+	   -----> sweep_set---------->|-->classes
+           |                          |
+	   |	                      |-->functions
+           |                          |
+           |                          |-->cfunctions
 	   |
-	   -----> map|-->classes
-           |         |
-	   |	     |-->functions
+	   -----> map---------------->|-->classes
+           |                          |
+	   |	                      |-->functions
+           |                          |
+           |                          |-->cfunctions
            |
-	   -----> gui|-->classes
-                     |
-		     |-->functions
+	   -----> gui---------------->|-->classes
+                                      |
+		                      |-->functions
+                                      |
+                                      |-->cfunctions
 
 
 
