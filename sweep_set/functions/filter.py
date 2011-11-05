@@ -1,6 +1,4 @@
-import sys
-sys.path.append("/home/romain/setproc/lib/")
-import moving_average as mva
+from setproc.common.cfunctions import moving_average as mva
 from numpy import square, diff
 
 def filter(sweep, width, power, width2):
