@@ -18,3 +18,21 @@ class Stat_point() :
 
     def pass_array(self):
         return [self.value, self.field, self.up, self.trace, self.sweep_nbr ]
+
+    def in_between(self, seuil1, seuil2) :
+        if self.value > seuil1 and self.value < seuil2 :
+            return True
+        else :
+            return False
+
+    def inferior(self, seuil):
+        if self.value < seuil :
+            return True
+        else :
+            return False
+
+    def superior(self, seuil):
+        if self.value > seuil :
+            return True
+        else :
+            return False
