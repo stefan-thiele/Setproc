@@ -2,6 +2,7 @@
 *.c
 #temp file
 *.swp
+*.swo
 #bluilding folder
 build/
 #pyc files
