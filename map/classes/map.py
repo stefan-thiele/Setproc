@@ -1,12 +1,15 @@
-"""
-Here are gathered the class dedicated to coulomb maps. Now, with the new javascripts,
-"""
+from setproc.map.functions.map_functions import plot_profile_h, plot_profile, get_coupling, map_merge, check_merge_map
+from setproc.common.classes.to_save_object import ToSaveObject
+from setproc.common.classes.open_json import OpenJson
+from setproc.common.classes.open_bin import OpenBin
+from numpy import matrix
+from matplotlib.pyplot import figure, imshow
 
 class Map(ToSaveObject) :
     """
     This class is used to handle data stored in a json file. It takes a jsonfile as argument ang generate an object that makes data easier to manipulate
     """
-    def __init__(self,filename,Xchannel,Ychannel,mode = "Json") :
+    def __init__(self, filename, Xchannel, Ychannel, mode = "Json") :
         ToSaveObject.__init__(self)
 
         if mode == "Json" :
@@ -23,12 +26,13 @@ class Map(ToSaveObject) :
 
         X = self["metadata"][Xchannel]
         Y = self["metadata"][Ychannel]
-        self["extent"] = [X["min"],X["max"],Y["min"],Y["max"]]
+        self["extent"] = [X["min"], X["max"], Y["min"], Y["max"]]
+        self.check(X["min"], X["max"])
 
     def map_phase(self) :
         self.fig = figure()
         self.ax = self.fig.add_subplot(111)
-        self.im = imshow(self["data"], interpolation = "nearest", origin="lower",extent = self["extent"])
+        self.im = imshow(self["data"], interpolation = "nearest", origin="lower", extent = self["extent"])
         self.col = self.fig.colorbar(self.im)
         self.ax.set_aspect("auto")
 
@@ -41,9 +45,27 @@ class Map(ToSaveObject) :
     def get_coupling(self):
         return get_coupling()
 
-    def check_merge(self,other):
-        return check_merge_map(self,other)
+    def check_merge(self, other):
+        return check_merge_map(self, other)
 
-    def merge(self,other):
-        return map_merge(self,other)
+    def merge(self, other):
+        return map_merge(self, other)
+
+    def check(self, xmin, xmax) :
+        if xmin > xmax :
+            self.reverse_data()
+        return True
+
+    def reverse_data(self):
+        #swapt the extent elements
+        temp = self["extent"][0]
+        self["extent"][0] = self["extent"][1]
+        self["extent"][1] = temp
+        data_tp = self["data"]
+        data_tp = matrix(data_tp).transpose().tolist()
+        data_tp.reverse()
+        self["data"] = matrix(data_tp).transpose().tolist()
+        return True
+
+
 
