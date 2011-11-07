@@ -2,8 +2,8 @@ from setproc.map.functions.map_functions import plot_profile_h, plot_profile, ge
 from setproc.common.classes.to_save_object import ToSaveObject
 from setproc.common.classes.open_json import OpenJson
 from setproc.common.classes.open_bin import OpenBin
-from numpy import matrix
-from matplotlib.pyplot import figure, imshow
+from numpy import matrix, size
+from matplotlib.pyplot import figure, imshow, ginput
 
 class Map(ToSaveObject) :
     """
