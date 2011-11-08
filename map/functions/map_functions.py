@@ -1,7 +1,7 @@
-#############
-###This file gather all the function used specifically by the map class
-####
-
+from numpy import size, linspace, matrix, floor
+from setproc.common.functions.data_handling import colarray
+import numpy as np
+from matplotlib.pyplot import ginput, figure, plot
 
 
 def get_coupling():
@@ -15,7 +15,7 @@ def get_coupling():
     tp = np.abs( ( temp[2][1] - temp[3][1] )/(temp[2][0] - temp[3][0])) * 1e-3
     Cd = (1 - tp)/ tp
     alp = 1 / (Cs + 1 +Cd)
-    return [Cs,Cd,alp]
+    return [Cs, Cd, alp]
 
 
 def get_slope():
@@ -53,11 +53,11 @@ def plot_profile(im):
     Vg = xm + nbr * (Xm-xm)/sweep_n
     figure()
     data = im.get_array()
-    plot( linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0))
-    return [linspace(ym, Ym, size(colarray(data,floor(nbr),0))) ,  colarray(data,floor(nbr),0),Vg]
+    plot( linspace(ym, Ym, size(colarray(data, floor(nbr), 0))) ,  colarray(data, floor(nbr), 0))
+    return [linspace(ym, Ym, size(colarray(data, floor(nbr), 0))) ,  colarray(data, floor(nbr), 0), Vg]
 
 
-def check_merge_map(map1,map2):
+def check_merge_map(map1, map2):
     meta1 = map1["metadata"]
     meta2 = map2["metadata"]
     x1 = meta1.keys()
@@ -65,18 +65,18 @@ def check_merge_map(map1,map2):
     if size(x1) != size(x2) :
         print( "the two objects have not the same metadata")
     print("here are the differences")
-    compare_dict(meta1,meta2)
+    compare_dict(meta1, meta2)
 
-def compare_dict(dic1,dic2,string = ""):
-    str = string
-    if isinstance(dic1,dict):
+def compare_dict(dic1, dic2, string = ""):
+    strn = string
+    if isinstance(dic1, dict):
         for x in dic1.keys() :
-            str_tp = str+"-->"+x
-            compare_dict(dic1[x],dic2[x],str_tp)
+            str_tp = strn+"-->"+x
+            compare_dict(dic1[x], dic2[x], str_tp)
     else:
         if dic1 != dic2 :
             print(" ------------>!!!!!!DIFF !!!!!!! ---------------->")
-            print(str)
+            print(strn)
             print(dic1)
             print("different from")
             print(dic2)
@@ -86,7 +86,7 @@ def compare_dict(dic1,dic2,string = ""):
 
     return True
 
-def map_merge(map1,map2):
+def map_merge(map1, map2):
     extent1 = map1["extent"]
     X1min = extent1[0]
     X1max = extent1[1]
@@ -104,12 +104,12 @@ def map_merge(map1,map2):
         print("not the same point number.... aborted")
     else :
         if X1min > X2min :
-            map1["extent"] = [X2min,X1max,extent1[2],extent1[3]]
+            map1["extent"] = [X2min, X1max, extent1[2], extent1[3]]
 
             map1["data"] = matrix(map2["data"]).transpose().tolist()+matrix(map1["data"]).transpose().tolist()
             map1["data"] = matrix(map1["data"]).transpose().tolist()
         if X2min > X1min :
-            map1["extent"] = [X1min,X2max,extent1[2],extent1[3]]
+            map1["extent"] = [X1min, X2max, extent1[2], extent1[3]]
             map1["data"] = matrix(map1["data"]).transpose().tolist()+matrix(map2["data"]).transpose().tolist()
             map1["data"] = matrix(map1["data"]).transpose().tolist()
 
