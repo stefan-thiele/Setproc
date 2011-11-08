@@ -2,8 +2,8 @@ from setproc.map.functions.map_functions import plot_profile_h, plot_profile, ge
 from setproc.common.classes.to_save_object import ToSaveObject
 from setproc.common.classes.open_json import OpenJson
 from setproc.common.classes.open_bin import OpenBin
-from numpy import matrix, size
-from matplotlib.pyplot import figure, imshow, ginput
+from numpy import matrix, log10
+from matplotlib.pyplot import figure, imshow
 
 class Map(ToSaveObject) :
     """
@@ -55,6 +55,17 @@ class Map(ToSaveObject) :
         if xmin > xmax :
             self.reverse_data()
         return True
+
+    def log_scale(self):
+        self["datalog"] = log10(self["data"])
+
+    def map_log(self):
+        self.log_scale()
+        self.fig_log = figure()
+        self.ax_log = self.fig_log.add_subplot(111)
+        self.im_log = imshow(self["datalog"], interpolation = "nearest", origin="lower", extent = self["extent"])
+        self.col_log = self.fig_log.colorbar(self.im_log)
+        self.ax_log.set_aspect("auto")
 
     def reverse_data(self):
         #swapt the extent elements
