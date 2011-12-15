@@ -4,8 +4,8 @@ from setproc.common.classes.open_bin import OpenBin #to be able to open json and
 from setproc.sweep_set.functions.merge_gb import merge_GB
 from setproc.sweep_set.classes.sweep_set import sweep_set_open #to open and manage sweep_set_open objects
 from setproc.sweep_set.classes.stat_point import Stat_point
-from numpy import size, histogram2d, log10, array
-from matplotlib.pyplot import figure, title, hist, ginput
+from numpy import size, histogram2d, log10, array, histogram
+from matplotlib.pyplot import figure, title, hist, ginput, plot, xlabel, ylabel, xlim, ylim
 
 class cycle_process(ToSaveObject) :
     """
@@ -123,12 +123,13 @@ class cycle_process(ToSaveObject) :
         return True
 
 
-    def get_hist(self, points, shift_trace=1):
+    def get_hist(self, points,rge = "None", shift_trace=1):
         seuil1 = self["calibration"]["plot"]["seuil1"]
         seuil2 = self["calibration"]["plot"]["seuil2"]
         shift_B = self["calibration"]["plot"]["offset"]
         trace_range = self["calibration"]["plot"]["range"]
-        rge = [trace_range, trace_range]
+        if rge == "None" :
+            rge = [trace_range, trace_range]
         temp = []
         siup = size(self["detection"])
         for i in range(siup) :
@@ -316,20 +317,46 @@ class cycle_process(ToSaveObject) :
         self["hysteresis"] = [[], []]
         tot_size = size(self["detection"])
         itera = int(tot_size/4)
+        seuil = self["calibration"]["plot"]["seuil1"]
         for i in range(itera):
             trace1 = self["detection"][4*i]
             trace2 = self["detection"][4*i+1]
             retrace1 = self["detection"][4*i+2]
             retrace2 = self["detection"][4*i+3]
-            if(trace1.value > trace2.value) :
+            if abs(trace1.value) > abs(trace2.value) and abs(trace1.value) > seuil :
                 self["hysteresis"][0].append(trace1.field)
-            else :
+            elif abs(trace2.value) > seuil :
                 self["hysteresis"][0].append(trace2.field)
 
-            if(retrace1.value > retrace2.value) :
+            if abs(retrace1.value) > abs(retrace2.value) and abs(retrace1.value) > seuil :
                 self["hysteresis"][1].append(retrace1.field)
-            else :
+            elif abs(retrace2.value) > seuil :
                 self["hysteresis"][1].append(retrace2.field)
+
+    def plot_hysteresis(self, xmin, xmax, bins = 200, width = 3, color = ["red","blue"]):
+        self.get_hysteresis()
+        ht = histogram(self['hysteresis'][0], bins, [xmin, xmax])
+        hr = histogram(self['hysteresis'][1], bins, [xmin, xmax])
+        vt = ht[1]
+        vr = hr[1]
+        sum_ht = sum(ht[0])
+        sum_hr = sum(hr[0])
+        norm_val = max(sum_ht, sum_hr)
+        ht = 1.*ht[0]/norm_val
+        hr = 1.*hr[0]/norm_val
+        size_h = size(ht)
+        for i in range(size(ht)) :
+            if i > 0 :
+                ht[i] = ht[i] + ht[i-1]
+                hr[i] = hr[i] + hr[i-1]
+        figure()
+        plot(vt[:size_h], ht * 2 - 1, linewidth = width, color = color[0])
+        plot(vr[:size_h], hr * 2 - 1 + 2.* (norm_val - sum_hr) / norm_val, linewidth = width, color = color[1])
+        xlim(xmin, xmax)
+        ylim(-1.05, 1.05)
+        xlabel("B (T)")
+        ylabel(r"$M/M_s$")
+        return [vt[:size_h], ht * 2 - 1, vr[:size_h], hr * 2 - 1 + 2.* (norm_val - sum_hr) / norm_val]
 
 
     def get_time_stat(self, mode = "retrace-trace") :
@@ -406,12 +433,12 @@ class cycle_process(ToSaveObject) :
         self["calibration"]["plot"]["range"] = "None"
         self["calibration"]["plot"]["offset"] = "None"
 
-    def calibrate_offset(self):
+    def calibrate_offset(self, kind1 = "up", kind2 = "down"):
         print("Select the trace then the retrace")
         rge = self["calibration"]["plot"]["range"]
         figure()
-        hist(self["sort"]["trace"]["up"], 100, rge)
-        hist(self["sort"]["retrace"]["up"], 100, rge)
+        hist(self["sort"]["trace"][kind1], 100, rge)
+        hist(self["sort"]["retrace"][kind2], 100, rge)
         temp = ginput(2)
         self["calibration"]["plot"]["offset"] = temp[1][0] - temp[0][0]
 
@@ -422,8 +449,8 @@ class cycle_process(ToSaveObject) :
         print("Make your choice")
         print("1 ----> Extract statistique")
 
-        if choice == 1 :
-            self.menu_stat(self)
+        #if choice == 1 :
+        #    self.menu_stat(self)
 
         return True
 
