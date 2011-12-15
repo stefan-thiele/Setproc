@@ -78,5 +78,12 @@ class Map(ToSaveObject) :
         self["data"] = matrix(data_tp).transpose().tolist()
         return True
 
+    def __add__(self,other):
+        self.merge(other)
+
+
+    def __mod__(self,other):
+        self.check_merge(other)
+
 
 
