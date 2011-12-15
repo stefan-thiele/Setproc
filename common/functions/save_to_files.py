@@ -13,6 +13,8 @@ def cyc_save_fig(filename, fig, cyc, file_format = "png"):
     fig.savefig(figfile)
     txtfile = filename+"/"+filename+".txt"
     save_obj_txt(txtfile, cyc["calibration"])
+    txtfile = filename+"/"+filename+"_metadata.txt"
+    save_obj_txt(txtfile, cyc["metadata"])
     return True
 
 
