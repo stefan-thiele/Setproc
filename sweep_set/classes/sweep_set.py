@@ -2,15 +2,12 @@ from copy import deepcopy
 from setproc.common.classes.open_json import OpenJson
 from setproc.common.classes.open_bin import OpenBin
 from setproc.sweep_set.classes.stat_point import Stat_point
-from setproc.sweep_set.functions.extract_stat import extract_stat
+import setproc.common.cfunctions.extract_stat as exst
 from setproc.sweep_set.functions.merge_gb import merge_GB
 from setproc.sweep_set.functions.filter import filter
 from matplotlib.pyplot import figure, draw, show, get_fignums
 import numpy as np
 import cPickle
-
-
-exst = extract_stat
 
 
 
