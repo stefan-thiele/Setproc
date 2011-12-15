@@ -3,7 +3,8 @@ from numpy import matrix, zeros, sqrt
 
 def MPauli(J, muB = 1) :
     """
-    Compute the Pauli matrices for a given system. It returns them in the following order : Sx,Sy,Sz,S+,S-"""
+    Compute the Pauli matrices for a given system. It returns them in the following order : Sx,Sy,Sz,S+,S-
+    """
 
     sigmaX = matrix( zeros((2*J+1, 2*J+1)) )
     sigmaY = matrix( zeros((2*J+1, 2*J+1)) )
@@ -32,6 +33,6 @@ def MPauli(J, muB = 1) :
     #SigmaX
     sigmaX = (sigmaPlus+sigmaMoins) / 2.
     #SigmaY
-    sigmaY=1j * (sigmaMoins-sigmaPlus) / 2.
+    sigmaY = 1j * (sigmaMoins-sigmaPlus) / 2.
 
     return [sigmaX*muB,  sigmaY*muB, sigmaZ *muB , sigmaPlus * muB, sigmaMoins * muB]
