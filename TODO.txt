@@ -44,7 +44,6 @@
 -> give the possibility for each one of the statistic representation to select a substet of detection.
 -> while loading : if there is any JSONDecodeErro, discard both trace and retrace an continue loading files
 -> Suppress the double sanity_check when only one file is loaded
--> Correct the error in get_A_R() : it has to be trace[i+1] vs retrace[i]
 -> Implement a function taking care of the time checking to make the code shorter
 
 
