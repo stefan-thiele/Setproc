@@ -3,7 +3,7 @@
 **
 -> Finish to clean the code in order for it to be easier to read (+ tab->space).
 -> Create a folder to gather all the functions
--> Divide big files of functions in smaller individual set of correlated functions
+> Divide big files of functions in smaller individual set of correlated functions
 -> Adopt more structured folder layout :
  Setproc---|
 	   -----> common------------->|-->classes
