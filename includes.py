@@ -1,4 +1,4 @@
-folder = "/home/romain/setproc/"
+folder = "/home/admins/1PhD/setproc/"
 import sys
 sys.path.append(folder+"lib/")
 
