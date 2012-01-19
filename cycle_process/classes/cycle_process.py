@@ -407,6 +407,64 @@ class cycle_process(ToSaveObject) :
 
         return hist(result, 25)
 
+
+    def get_peaks(self,bins=200):
+	"""
+	The position and width of the 4 peaks can be selected by mouse click.
+	The information is stored in ["calibration"]["plots"]
+	The method get_A_R() has to be executed before	
+	"""
+	figure()
+	bound = self["calibration"]["plot"]["range"]
+	ht = hist(self["AvsR"][0],bins,bound)
+	hr = hist(self["AvsR"][1],bins,bound)
+	print("Chose the 4 maxima by left click")	
+	#get the position of the 4 peaks	
+	max_hist = ginput(4)
+	x_pts = map(lambda x: x[0],max_hist)
+	y_pts = map(lambda x: x[1],max_hist)
+	plot(x_pts,y_pts,"ro")
+	print("Select peak width with 2 clicks")
+	#get the width of the peak	
+	pw_hist = ginput(2)
+	pw_x = map(lambda x: x[0],pw_hist)
+	pw_y = map(lambda x: x[1],pw_hist)
+	pw = abs(pw_x[1]-pw_x[0])	
+	plot(pw_x,pw_y,"-o")
+	#store information in ["calibration"]["plots"]	
+	self["calibration"]["plot"]["peaks"] = []
+	for k in range(4):
+		self["calibration"]["plot"]["peaks"].append(x_pts[k])
+
+	self["calibration"]["plot"]["peak_width"] = pw
+
+	
+    def	get_corr(self,peaknbr=0):
+	"""
+	The correlation between peaks occuring in 2 subsequent sweeps is plotted.
+	The method get_peaks() has to be executed before
+	Syntax: get_corr(int1)
+	int1 is an integer number between 0 and 3 and corresponds to the peak to which the correlation is calculated.
+	"""
+	figure()	
+	corr = [] # correlation
+	x_pts = self["calibration"]["plot"]["peaks"]
+	pw = self["calibration"]["plot"]["peak_width"]
+	corr_dscr = [0,0,0,0] # discrete correlation
+	size_AR = size(self["AvsR"][0])
+	for i in range(size_AR):
+		if ((self["AvsR"][0][i] > (x_pts[peaknbr]-pw)) and  (self["AvsR"][0][i] < (x_pts[peaknbr]+pw)) ):
+			corr.append(self["AvsR"][1][i])
+			for j in range(4):
+				if ((self["AvsR"][1][i] > (x_pts[j]-pw)) and  (self["AvsR"][1][i] < (x_pts[j]+pw)) ):
+					corr_dscr[j] = corr_dscr[j]+1	
+
+	hist(corr,200)
+	figure()	
+	bar(x_pts,corr_dscr,pw,align="center")
+				
+
+	
     def set_plot_calibration(self, args = "None"):
         if args == "None":
             print("to be done")
